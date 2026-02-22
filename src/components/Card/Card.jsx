@@ -1,4 +1,5 @@
-const Card = ({ theme = "orange", text = "Web Design" }) => {
+// src/components/Card/Card.jsx
+const Card = ({ theme = "orange", text = "Web Design", title = "Название задачи", date = "30.10.23" }) => {
   return (
     <div className="cards__item">
       <div className="cards__card card">
@@ -16,7 +17,7 @@ const Card = ({ theme = "orange", text = "Web Design" }) => {
         </div>
         <div className="card__content">
           <a href="" target="_blank">
-            <h3 className="card__title">Название задачи</h3>
+            <h3 className="card__title">{title}</h3>
           </a>
           <div className="card__date">
             <svg
@@ -47,7 +48,7 @@ const Card = ({ theme = "orange", text = "Web Design" }) => {
                 </clipPath>
               </defs>
             </svg>
-            <p>30.10.23</p>
+            <p>{date}</p>
           </div>
         </div>
       </div>

@@ -11,6 +11,7 @@ const Column = ({ title, cards = [] }) => {
         {cards.map((card) => (
           <Card
             key={card.id}
+            id={card.id}
             theme={card.theme}
             text={card.text}
             title={card.title}

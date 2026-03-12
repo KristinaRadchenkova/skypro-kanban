@@ -1,25 +1,40 @@
-// src/components/Card/Card.jsx
-const Card = ({ theme = "orange", text = "Web Design", title = "Название задачи", date = "30.10.23" }) => {
+import {
+  CardItem,
+  CardContainer,
+  CardGroup,
+  CardTheme,
+  CardBtn,
+  CardContent,
+  CardTitle,
+  CardDate,
+} from "./Card.styled";
+
+const Card = ({
+  theme = "orange",
+  text = "Web Design",
+  title = "Название задачи",
+  date = "30.10.23",
+}) => {
   return (
-    <div className="cards__item">
-      <div className="cards__card card">
-        <div className="card__group">
-          <div className={`card__theme _${theme}`}>
-            <p className={`_${theme}`}>{text}</p>
-          </div>
+    <CardItem>
+      <CardContainer>
+        <CardGroup>
+          <CardTheme $theme={theme}>
+            <p>{text}</p>
+          </CardTheme>
           <a href="#popBrowse" target="_self">
-            <div className="card__btn">
+            <CardBtn>
               <div></div>
               <div></div>
               <div></div>
-            </div>
+            </CardBtn>
           </a>
-        </div>
-        <div className="card__content">
+        </CardGroup>
+        <CardContent>
           <a href="" target="_blank">
-            <h3 className="card__title">{title}</h3>
+            <CardTitle>{title}</CardTitle>
           </a>
-          <div className="card__date">
+          <CardDate>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="13"
@@ -49,10 +64,10 @@ const Card = ({ theme = "orange", text = "Web Design", title = "Название
               </defs>
             </svg>
             <p>{date}</p>
-          </div>
-        </div>
-      </div>
-    </div>
+          </CardDate>
+        </CardContent>
+      </CardContainer>
+    </CardItem>
   );
 };
 

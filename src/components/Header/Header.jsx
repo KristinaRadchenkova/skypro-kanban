@@ -1,6 +1,14 @@
-// src/components/Header/Header.jsx
 import { useState } from "react";
 import PopUser from "../PopUser/PopUser";
+import {
+  HeaderContainer,
+  HeaderBlock,
+  HeaderLogo,
+  HeaderNav,
+  HeaderBtnMainNew,
+  HeaderUser,
+} from "./Header.styled";
+import { Container } from "../App.styled";
 
 const Header = () => {
   const [isUserPopupOpen, setIsUserPopupOpen] = useState(false);
@@ -11,36 +19,31 @@ const Header = () => {
   };
 
   return (
-    <header className="header">
-      <div className="container">
-        <div className="header__block">
-          <div className="header__logo _show _light">
+    <HeaderContainer>
+      <Container>
+        <HeaderBlock>
+          <HeaderLogo $show>
             <a href="" target="_self">
               <img src="images/logo.png" alt="logo" />
             </a>
-          </div>
-          <div className="header__logo _dark">
+          </HeaderLogo>
+          <HeaderLogo>
             <a href="" target="_self">
               <img src="images/logo_dark.png" alt="logo" />
             </a>
-          </div>
-          <nav className="header__nav">
-            <button className="header__btn-main-new _hover01" id="btnMainNew">
+          </HeaderLogo>
+          <HeaderNav>
+            <HeaderBtnMainNew id="btnMainNew">
               <a href="#popNewCard">Создать новую задачу</a>
-            </button>
-            <a 
-              href="#user-set-target" 
-              className="header__user _hover02"
-              onClick={handleUserNameClick}
-            >
+            </HeaderBtnMainNew>
+            <HeaderUser href="#user-set-target" onClick={handleUserNameClick}>
               Ivan Ivanov
-            </a>
-            {/* Передаем isOpen как пропс в PopUser */}
+            </HeaderUser>
             <PopUser isOpen={isUserPopupOpen} />
-          </nav>
-        </div>
-      </div>
-    </header>
+          </HeaderNav>
+        </HeaderBlock>
+      </Container>
+    </HeaderContainer>
   );
 };
 

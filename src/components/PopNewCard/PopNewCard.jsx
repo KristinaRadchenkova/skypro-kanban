@@ -1,69 +1,62 @@
+import * as S from "./PopNewCard.styled";
 import Calendar from "../Calendar/Calendar";
 
 const PopNewCard = () => {
   return (
-    <div className="pop-new-card" id="popNewCard">
-      <div className="pop-new-card__container">
-        <div className="pop-new-card__block">
-          <div className="pop-new-card__content">
-            <h3 className="pop-new-card__ttl">Создание задачи</h3>
-            <a href="#" className="pop-new-card__close">
-              &#10006;
-            </a>
-            <div className="pop-new-card__wrap">
-              <form
-                className="pop-new-card__form form-new"
-                id="formNewCard"
-                action="#"
-              >
-                <div className="form-new__block">
-                  <label htmlFor="formTitle" className="subttl">
+    <S.PopNewCardContainer id="popNewCard">
+      <S.PopNewCardWrapper>
+        <S.PopNewCardBlock>
+          <S.PopNewCardContent>
+            <S.PopNewCardTitle>Создание задачи</S.PopNewCardTitle>
+            <S.PopNewCardClose href="#">&#10006;</S.PopNewCardClose>
+            <S.PopNewCardWrap>
+              <S.PopNewCardForm id="formNewCard" action="#">
+                <S.FormNewBlock>
+                  <S.FormNewLabel htmlFor="formTitle">
                     Название задачи
-                  </label>
-                  <input
-                    className="form-new__input"
+                  </S.FormNewLabel>
+                  <S.FormNewInput
                     type="text"
                     name="name"
                     id="formTitle"
                     placeholder="Введите название задачи..."
                     autoFocus
                   />
-                </div>
-                <div className="form-new__block">
-                  <label htmlFor="textArea" className="subttl">
+                </S.FormNewBlock>
+                <S.FormNewBlock>
+                  <S.FormNewLabel htmlFor="textArea">
                     Описание задачи
-                  </label>
-                  <textarea
-                    className="form-new__area"
+                  </S.FormNewLabel>
+                  <S.FormNewTextarea
                     name="text"
                     id="textArea"
                     placeholder="Введите описание задачи..."
-                  ></textarea>
-                </div>
-              </form>
+                  />
+                </S.FormNewBlock>
+              </S.PopNewCardForm>
               <Calendar mode="new" />
-            </div>
-            <div className="pop-new-card__categories categories">
-              <p className="categories__p subttl">Категория</p>
-              <div className="categories__themes">
-                <div className="categories__theme _orange _active-category">
-                  <p className="_orange">Web Design</p>
-                </div>
-                <div className="categories__theme _green">
-                  <p className="_green">Research</p>
-                </div>
-                <div className="categories__theme _purple">
-                  <p className="_purple">Copywriting</p>
-                </div>
-              </div>
-            </div>
-            <button className="form-new__create _hover01" id="btnCreate">
+            </S.PopNewCardWrap>
+            <S.CategoriesBlock>
+              <S.CategoriesTitle>Категория</S.CategoriesTitle>
+              <S.CategoriesThemes>
+                <S.CategoryTheme $color="orange" $isActive>
+                  <p>Web Design</p>
+                </S.CategoryTheme>
+                <S.CategoryTheme $color="green">
+                  <p>Research</p>
+                </S.CategoryTheme>
+                <S.CategoryTheme $color="purple">
+                  <p>Copywriting</p>
+                </S.CategoryTheme>
+              </S.CategoriesThemes>
+            </S.CategoriesBlock>
+            <S.FormNewCreateButton id="btnCreate">
               Создать задачу
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+            </S.FormNewCreateButton>
+          </S.PopNewCardContent>
+        </S.PopNewCardBlock>
+      </S.PopNewCardWrapper>
+    </S.PopNewCardContainer>
   );
 };
 

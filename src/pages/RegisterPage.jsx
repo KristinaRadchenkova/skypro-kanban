@@ -3,138 +3,81 @@ import { useNavigate, Link } from "react-router-dom";
 import styled from "styled-components";
 
 const RegisterContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  min-height: 100vh;
-  background-color: #eaeef6;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: ${(props) => props.theme.colors.mainBackground};
 `;
 
 const RegisterBlock = styled.div`
-  display: block;
-  margin: 0 auto;
-  background-color: #ffffff;
-  max-width: 368px;
   width: 100%;
-  padding: 50px 60px;
-  border-radius: 10px;
-  border: 0.7px solid #d4dbe5;
-  box-shadow: 0px 4px 67px -12px rgba(0, 0, 0, 0.13);
-
-  @media screen and (max-width: 375px) {
-    max-width: 368px;
-    width: 100%;
-    padding: 0 16px;
-    border-radius: none;
-    border: none;
-    box-shadow: none;
-  }
+  max-width: 400px;
+  padding: 40px 30px;
+  background-color: ${(props) => props.theme.colors.white};
+  border-radius: ${(props) => props.theme.borderRadius.large};
+  box-shadow: 0px 10px 39px 0px rgba(26, 56, 101, 0.21);
 `;
 
 const RegisterTitle = styled.h2`
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 30px;
   text-align: center;
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 30px;
-  letter-spacing: -0.6px;
-  margin-bottom: 20px;
-  color: #000000;
+  color: ${(props) => props.theme.colors.black};
 `;
 
 const RegisterForm = styled.form`
-  width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  gap: 20px;
 `;
 
 const Input = styled.input`
   width: 100%;
-  min-width: 100%;
-  border-radius: 8px;
+  padding: 14px;
+  background: #eaeef6;
   border: 0.7px solid rgba(148, 166, 190, 0.4);
+  border-radius: 8px;
+  font-size: 14px;
   outline: none;
-  padding: 10px 8px;
-  margin-bottom: 7px;
-  font-family: "Roboto", sans-serif;
 
   &::placeholder {
-    font-family: "Roboto", sans-serif;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 21px;
-    letter-spacing: -0.28px;
     color: #94a6be;
   }
 `;
 
 const RegisterButton = styled.button`
-  width: 100%;
-  height: 30px;
-  background-color: #565eef;
-  border-radius: 4px;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  height: 40px;
+  background-color: ${(props) => props.theme.colors.primary};
+  color: ${(props) => props.theme.colors.white};
   border: none;
-  outline: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  line-height: 21px;
+  border-radius: ${(props) => props.theme.borderRadius.small};
+  font-size: 16px;
   font-weight: 500;
-  letter-spacing: -0.14px;
-  color: #ffffff;
   cursor: pointer;
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: #33399b;
-  }
-
-  @media screen and (max-width: 375px) {
-    height: 40px;
+    background-color: ${(props) => props.theme.colors.primaryHover};
   }
 `;
 
 const FormGroup = styled.div`
   text-align: center;
 
-  p,
-  a {
-    color: rgba(148, 166, 190, 0.4);
+  p {
+    color: ${(props) => props.theme.colors.gray};
     font-size: 14px;
-    font-weight: 400;
-    line-height: 150%;
-    letter-spacing: -0.14px;
-  }
-
-  a {
-    text-decoration: underline;
-    color: rgba(148, 166, 190, 0.4);
-    transition: color 0.2s;
-
-    &:hover {
-      color: #565eef;
-    }
   }
 `;
 
 const LoginLink = styled(Link)`
-  text-decoration: underline;
-  color: rgba(148, 166, 190, 0.4);
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 150%;
-  letter-spacing: -0.14px;
-  margin-left: 5px;
+  color: ${(props) => props.theme.colors.primary};
+  text-decoration: none;
 
   &:hover {
-    color: #565eef;
+    text-decoration: underline;
   }
 `;
 

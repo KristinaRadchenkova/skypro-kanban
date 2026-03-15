@@ -1,3 +1,4 @@
+import { useNavigate, Link } from "react-router-dom";
 import {
   PopUserSet,
   PopUserName,
@@ -7,6 +8,13 @@ import {
 } from "./PopUser.styled";
 
 const PopUser = ({ isOpen }) => {
+  const navigate = useNavigate();
+
+  const handleExitClick = (e) => {
+    e.preventDefault();
+    navigate("/exit");
+  };
+
   return (
     <PopUserSet $isOpen={isOpen} id="user-set-target">
       <PopUserName>Ivan Ivanov</PopUserName>
@@ -15,8 +23,8 @@ const PopUser = ({ isOpen }) => {
         <p>Темная тема</p>
         <input type="checkbox" className="checkbox" name="checkbox" />
       </PopUserTheme>
-      <PopUserButton type="button">
-        <a href="#popExit">Выйти</a>
+      <PopUserButton type="button" onClick={handleExitClick}>
+        <Link to="/exit">Выйти</Link>
       </PopUserButton>
     </PopUserSet>
   );

@@ -41,7 +41,7 @@ const Header = () => {
           </HeaderLogo>
           <HeaderNav>
             <HeaderBtnMainNew id="btnMainNew" onClick={handleNewTaskClick}>
-              <Link to="/new">Создать новую задачу</Link>
+              Создать новую задачу
             </HeaderBtnMainNew>
             <HeaderUser href="#user-set-target" onClick={handleUserNameClick}>
               Ivan Ivanov

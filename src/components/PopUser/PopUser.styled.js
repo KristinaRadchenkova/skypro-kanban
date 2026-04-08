@@ -80,17 +80,10 @@ export const PopUserButton = styled.button`
   color: ${(props) => props.theme.colors.primary};
   border-radius: ${(props) => props.theme.borderRadius.small};
   border: 1px solid ${(props) => props.theme.colors.primary};
-
-  a {
-    color: ${(props) => props.theme.colors.primary};
-  }
+  cursor: pointer;
 
   &:hover {
     background-color: ${(props) => props.theme.colors.primaryHover};
     color: ${(props) => props.theme.colors.white};
-
-    a {
-      color: ${(props) => props.theme.colors.white};
-    }
   }
 `;

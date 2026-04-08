@@ -6,10 +6,11 @@ export const PopBrowseContainer = styled.div`
   min-width: 375px;
   height: 100%;
   min-height: 100vh;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   z-index: 7;
+  pointer-events: none;
 
   @media screen and (max-width: 660px) {
     top: 70px;
@@ -25,7 +26,8 @@ export const PopBrowseWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.4);
+  background: transparent; /* Убираем затемнение */
+  pointer-events: none;
 
   @media screen and (max-width: 660px) {
     padding: 0;
@@ -43,6 +45,8 @@ export const PopBrowseBlock = styled.div`
   border-radius: 10px;
   border: 0.7px solid #d4dbe5;
   position: relative;
+  pointer-events: auto;
+  box-shadow: 0px 10px 39px 0px rgba(26, 56, 101, 0.21);
 
   @media screen and (max-width: 660px) {
     border-radius: 0;
@@ -53,6 +57,7 @@ export const PopBrowseBlock = styled.div`
   }
 `;
 
+// Остальные стили остаются без изменений...
 export const PopBrowseContent = styled.div`
   display: block;
   text-align: left;

@@ -1,14 +1,24 @@
+import { useNavigate } from "react-router-dom";
 import * as S from "./PopNewCard.styled";
 import Calendar from "../Calendar/Calendar";
 
 const PopNewCard = () => {
+  const navigate = useNavigate();
+
+  const handleClose = (e) => {
+    e.preventDefault();
+    navigate("/");
+  };
+
   return (
     <S.PopNewCardContainer id="popNewCard">
       <S.PopNewCardWrapper>
         <S.PopNewCardBlock>
           <S.PopNewCardContent>
             <S.PopNewCardTitle>Создание задачи</S.PopNewCardTitle>
-            <S.PopNewCardClose href="#">&#10006;</S.PopNewCardClose>
+            <S.PopNewCardClose href="#" onClick={handleClose}>
+              &#10006;
+            </S.PopNewCardClose>
             <S.PopNewCardWrap>
               <S.PopNewCardForm id="formNewCard" action="#">
                 <S.FormNewBlock>

@@ -1,8 +1,16 @@
+import { useNavigate } from "react-router-dom";
 import * as S from "./PopBrowse.styled";
 import Calendar from "../Calendar/Calendar";
 
 const PopBrowse = ({ card }) => {
+  const navigate = useNavigate();
+
   if (!card) return null;
+
+  const handleClose = (e) => {
+    e.preventDefault();
+    navigate("/");
+  };
 
   return (
     <S.PopBrowseContainer id="popBrowse">
@@ -76,7 +84,7 @@ const PopBrowse = ({ card }) => {
             <S.ButtonGroup>
               <div className="btn-group">
                 <S.ButtonEdit $primary>Редактировать задачу</S.ButtonEdit>
-                <S.ButtonClose>Закрыть</S.ButtonClose>
+                <S.ButtonClose onClick={handleClose}>Закрыть</S.ButtonClose>
               </div>
             </S.ButtonGroup>
           </S.PopBrowseContent>

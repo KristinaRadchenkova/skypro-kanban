@@ -1,14 +1,17 @@
-import styled from "styled-components";
+// PopNewCard.styled.js
+import styled, { css } from "styled-components";
 
 export const PopNewCardContainer = styled.div`
-  display: none;
+  display: block;
+  width: 100%;
   min-width: 375px;
   height: 100%;
   min-height: 100vh;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   z-index: 6;
+  pointer-events: none;
 
   @media screen and (max-width: 660px) {
     top: 70px;
@@ -24,7 +27,8 @@ export const PopNewCardWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.4);
+  background: transparent; 
+  pointer-events: none;
 
   @media screen and (max-width: 660px) {
     padding: 0;
@@ -38,10 +42,12 @@ export const PopNewCardBlock = styled.div`
   background-color: ${(props) => props.theme.colors.white};
   max-width: 630px;
   width: 100%;
-  padding: 40px 30px 48px;
+  padding: 40px 30px 38px;
   border-radius: 10px;
   border: 0.7px solid #d4dbe5;
   position: relative;
+  pointer-events: auto;
+  box-shadow: 0px 10px 39px 0px rgba(26, 56, 101, 0.21);
 
   @media screen and (max-width: 660px) {
     border-radius: 0;
@@ -70,10 +76,12 @@ export const PopNewCardClose = styled.a`
   top: 20px;
   right: 30px;
   color: #94a6be;
+  font-size: 20px;
+  text-decoration: none;
   cursor: pointer;
 
   &:hover {
-    color: #000000;
+    color: #000;
   }
 `;
 
@@ -81,6 +89,7 @@ export const PopNewCardWrap = styled.div`
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  margin-top: 15px;
 
   @media screen and (max-width: 660px) {
     display: block;
@@ -90,7 +99,6 @@ export const PopNewCardWrap = styled.div`
 export const PopNewCardForm = styled.form`
   max-width: 370px;
   width: 100%;
-  display: block;
   margin-bottom: 20px;
 
   @media screen and (max-width: ${(props) => props.theme.breakpoints.mobile}) {
@@ -101,6 +109,7 @@ export const PopNewCardForm = styled.form`
 export const FormNewBlock = styled.div`
   display: flex;
   flex-direction: column;
+  margin-bottom: 14px;
 `;
 
 export const FormNewLabel = styled.label`
@@ -108,42 +117,48 @@ export const FormNewLabel = styled.label`
   font-size: 14px;
   font-weight: 600;
   line-height: 1;
+  margin-bottom: 14px;
 `;
 
 export const FormNewInput = styled.input`
+  max-width: 370px;
   width: 100%;
   outline: none;
   padding: 14px;
-  background: transparent;
+  background: #eaeef6;
   border: 0.7px solid rgba(148, 166, 190, 0.4);
   border-radius: 8px;
   font-size: 14px;
   line-height: 1;
   letter-spacing: -0.14px;
-  margin: 20px 0;
 
   &::placeholder {
     font-weight: 400;
     font-size: 14px;
-    line-height: 1px;
     color: #94a6be;
     letter-spacing: -0.14px;
+  }
+
+  @media screen and (max-width: ${(props) => props.theme.breakpoints.mobile}) {
+    max-width: 100%;
+    height: 40px;
   }
 `;
 
 export const FormNewTextarea = styled.textarea`
+  max-width: 370px;
   width: 100%;
   outline: none;
   padding: 14px;
-  background: transparent;
+  background: #eaeef6;
   border: 0.7px solid rgba(148, 166, 190, 0.4);
   border-radius: 8px;
   font-size: 14px;
   line-height: 1;
   letter-spacing: -0.14px;
-  max-width: 370px;
   margin-top: 14px;
   height: 200px;
+  resize: none;
 
   &::placeholder {
     font-weight: 400;
@@ -160,7 +175,7 @@ export const FormNewTextarea = styled.textarea`
 `;
 
 export const CategoriesBlock = styled.div`
-  margin-bottom: 20px;
+  margin: 20px 0;
 `;
 
 export const CategoriesTitle = styled.p`
@@ -173,19 +188,15 @@ export const CategoriesTitle = styled.p`
 
 export const CategoriesThemes = styled.div`
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   align-items: flex-start;
   justify-content: flex-start;
+  gap: 8px;
 `;
 
 export const CategoryTheme = styled.div`
-  display: inline-block;
-  width: auto;
-  height: 30px;
-  padding: 8px 20px;
   border-radius: 24px;
-  margin-right: 7px;
-  opacity: ${(props) => (props.$isActive ? "1" : "0.4")};
+  padding: 11px 14px 10px;
   background-color: ${(props) => {
     switch (props.$color) {
       case "orange":
@@ -198,39 +209,42 @@ export const CategoryTheme = styled.div`
         return "#ffe4c2";
     }
   }};
+  color: ${(props) => {
+    switch (props.$color) {
+      case "orange":
+        return "#ff6d00";
+      case "green":
+        return "#06b16e";
+      case "purple":
+        return "#9a48f1";
+      default:
+        return "#ff6d00";
+    }
+  }};
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  border: ${(props) => (props.$isActive ? "2px solid #565eef" : "none")};
+  cursor: pointer;
 
-  p {
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 14px;
-    white-space: nowrap;
-    color: ${(props) => {
-      switch (props.$color) {
-        case "orange":
-          return "#ff6d00";
-        case "green":
-          return "#06b16e";
-        case "purple":
-          return "#9a48f1";
-        default:
-          return "#ff6d00";
-      }
-    }};
+  &:hover {
+    opacity: 0.8;
   }
 `;
 
 export const FormNewCreateButton = styled.button`
-  width: 132px;
-  height: 30px;
-  background-color: #565eef;
+  height: 40px;
+  padding: 0 14px;
   border-radius: 4px;
-  border: 0;
-  outline: none;
+  background-color: #565eef;
+  border: none;
   font-size: 14px;
   font-weight: 500;
   line-height: 1;
   color: #ffffff;
-  float: right;
+  cursor: pointer;
+  transition: background-color 0.2s;
 
   &:hover {
     background-color: #33399b;

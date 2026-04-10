@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import PopUser from "../PopUser/PopUser";
+import ConfirmModal from "../ConfirmModal/ConfirmModal";
 import {
   HeaderContainer,
   HeaderBlock,
@@ -12,10 +14,30 @@ import { Container } from "../App.styled";
 
 const Header = () => {
   const [isUserPopupOpen, setIsUserPopupOpen] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleUserNameClick = (e) => {
     e.preventDefault();
     setIsUserPopupOpen(!isUserPopupOpen);
+  };
+
+  const handleNewTaskClick = (e) => {
+    e.preventDefault();
+    navigate("/new");
+  };
+
+  const handleExitClick = () => {
+    setIsConfirmOpen(true);
+  };
+
+  const handleConfirmExit = () => {
+    setIsConfirmOpen(false);
+    navigate("/exit");
+  };
+
+  const handleCancelExit = () => {
+    setIsConfirmOpen(false);
   };
 
   return (
@@ -23,26 +45,33 @@ const Header = () => {
       <Container>
         <HeaderBlock>
           <HeaderLogo $show>
-            <a href="" target="_self">
-              <img src="images/logo.png" alt="logo" />
-            </a>
+            <Link to="/">
+              <img src="/images/logo.png" alt="logo" />
+            </Link>
           </HeaderLogo>
           <HeaderLogo>
-            <a href="" target="_self">
-              <img src="images/logo_dark.png" alt="logo" />
-            </a>
+            <Link to="/">
+              <img src="/images/logo_dark.png" alt="logo" />
+            </Link>
           </HeaderLogo>
           <HeaderNav>
-            <HeaderBtnMainNew id="btnMainNew">
-              <a href="#popNewCard">Создать новую задачу</a>
+            <HeaderBtnMainNew id="btnMainNew" onClick={handleNewTaskClick}>
+              Создать новую задачу
             </HeaderBtnMainNew>
-            <HeaderUser href="#user-set-target" onClick={handleUserNameClick}>
+            <HeaderUser href="#" onClick={handleUserNameClick}>
               Ivan Ivanov
             </HeaderUser>
-            <PopUser isOpen={isUserPopupOpen} />
+            <PopUser isOpen={isUserPopupOpen} onExitClick={handleExitClick} />
           </HeaderNav>
         </HeaderBlock>
       </Container>
+      <ConfirmModal
+        isOpen={isConfirmOpen}
+        onConfirm={handleConfirmExit}
+        onCancel={handleCancelExit}
+        title="Выход из системы"
+        message="Вы уверены, что хотите выйти?"
+      />
     </HeaderContainer>
   );
 };

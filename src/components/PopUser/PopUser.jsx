@@ -6,7 +6,12 @@ import {
   PopUserButton,
 } from "./PopUser.styled";
 
-const PopUser = ({ isOpen }) => {
+const PopUser = ({ isOpen, onExitClick }) => {
+  const handleExitClick = (e) => {
+    e.preventDefault();
+    onExitClick();
+  };
+
   return (
     <PopUserSet $isOpen={isOpen} id="user-set-target">
       <PopUserName>Ivan Ivanov</PopUserName>
@@ -15,8 +20,8 @@ const PopUser = ({ isOpen }) => {
         <p>Темная тема</p>
         <input type="checkbox" className="checkbox" name="checkbox" />
       </PopUserTheme>
-      <PopUserButton type="button">
-        <a href="#popExit">Выйти</a>
+      <PopUserButton type="button" onClick={handleExitClick}>
+        Выйти
       </PopUserButton>
     </PopUserSet>
   );

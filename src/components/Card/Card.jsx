@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import {
   CardItem,
   CardContainer,
@@ -10,6 +11,7 @@ import {
 } from "./Card.styled";
 
 const Card = ({
+  id,
   theme = "orange",
   text = "Web Design",
   title = "Название задачи",
@@ -22,18 +24,18 @@ const Card = ({
           <CardTheme $theme={theme}>
             <p>{text}</p>
           </CardTheme>
-          <a href="#popBrowse" target="_self">
+          <Link to={`/card/${id}`}>
             <CardBtn>
               <div></div>
               <div></div>
               <div></div>
             </CardBtn>
-          </a>
+          </Link>
         </CardGroup>
         <CardContent>
-          <a href="" target="_blank">
+          <Link to={`/card/${id}`}>
             <CardTitle>{title}</CardTitle>
-          </a>
+          </Link>
           <CardDate>
             <svg
               xmlns="http://www.w3.org/2000/svg"

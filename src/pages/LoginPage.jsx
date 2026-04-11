@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import styled from "styled-components";
+import { authAPI } from "../services/api";
 
-// Стилизованные компоненты
 const LoginContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -46,6 +46,11 @@ const Input = styled.input`
   &::placeholder {
     color: #94a6be;
   }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 `;
 
 const LoginButton = styled.button`
@@ -61,6 +66,11 @@ const LoginButton = styled.button`
 
   &:hover {
     background-color: ${(props) => props.theme.colors.primaryHover};
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 `;
 
@@ -82,28 +92,90 @@ const RegisterLink = styled(Link)`
   }
 `;
 
+const ErrorMessage = styled.div`
+  background-color: #fee;
+  color: #c33;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  text-align: center;
+`;
+
+const SuccessMessage = styled.div`
+  background-color: #e6f7e6;
+  color: #2d7a2d;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  text-align: center;
+`;
+
 const LoginPage = ({ setIsAuth }) => {
-  const [email, setEmail] = useState("");
+  const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/");
+    }
+  }, [navigate]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsAuth(true);
-    navigate("/");
+    setError("");
+    setSuccess("");
+    setIsLoading(true);
+
+    if (!login.trim()) {
+      setError("Введите логин");
+      setIsLoading(false);
+      return;
+    }
+
+    if (!password.trim()) {
+      setError("Введите пароль");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const result = await authAPI.login(login, password);
+      console.log("Login successful:", result);
+      setSuccess("Вход выполнен успешно! Перенаправление...");
+      setIsAuth(true);
+      setTimeout(() => {
+        navigate("/");
+      }, 1000);
+    } catch (err) {
+      console.error("Login error:", err);
+      setError(err.message || "Ошибка при входе. Проверьте логин и пароль.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <LoginContainer>
       <LoginBlock>
-        <LoginTitle>Вход</LoginTitle>
+        <LoginTitle>Вход в систему</LoginTitle>
+        {error && <ErrorMessage>{error}</ErrorMessage>}
+        {success && <SuccessMessage>{success}</SuccessMessage>}
         <LoginForm onSubmit={handleSubmit}>
           <Input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            placeholder="Логин"
+            value={login}
+            onChange={(e) => setLogin(e.target.value)}
             required
+            disabled={isLoading}
+            autoComplete="username"
           />
           <Input
             type="password"
@@ -111,8 +183,12 @@ const LoginPage = ({ setIsAuth }) => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            disabled={isLoading}
+            autoComplete="current-password"
           />
-          <LoginButton type="submit">Войти</LoginButton>
+          <LoginButton type="submit" disabled={isLoading}>
+            {isLoading ? "Вход..." : "Войти"}
+          </LoginButton>
           <FormGroup>
             <p>
               Нет аккаунта?{" "}

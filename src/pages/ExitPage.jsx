@@ -31,10 +31,10 @@ const ExitPage = ({ setIsAuth }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Выход из системы
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     setIsAuth(false);
 
-    // Перенаправление на страницу входа через 2 секунды
     const timer = setTimeout(() => {
       navigate("/login");
     }, 2000);

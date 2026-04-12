@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as S from "./PopNewCard.styled";
-import Calendar from "../Calendar/Calendar";
-import { tasksAPI } from "../../services/api";
+import Calendar from "../Calendar/Calendar.jsx";
+import { tasksAPI } from "../../services/api.js";
 
 const PopNewCard = () => {
   const navigate = useNavigate();

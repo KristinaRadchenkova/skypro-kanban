@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import PopUser from "../PopUser/PopUser";
 import ConfirmModal from "../ConfirmModal/ConfirmModal";
@@ -15,7 +15,19 @@ import { Container } from "../App.styled";
 const Header = () => {
   const [isUserPopupOpen, setIsUserPopupOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      try {
+        setUser(JSON.parse(userData));
+      } catch (e) {
+        console.error("Ошибка парсинга данных пользователя:", e);
+      }
+    }
+  }, []);
 
   const handleUserNameClick = (e) => {
     e.preventDefault();
@@ -40,6 +52,8 @@ const Header = () => {
     setIsConfirmOpen(false);
   };
 
+  const userName = user?.name || "Пользователь";
+
   return (
     <HeaderContainer>
       <Container>
@@ -59,7 +73,7 @@ const Header = () => {
               Создать новую задачу
             </HeaderBtnMainNew>
             <HeaderUser href="#" onClick={handleUserNameClick}>
-              Ivan Ivanov
+              {userName}
             </HeaderUser>
             <PopUser isOpen={isUserPopupOpen} onExitClick={handleExitClick} />
           </HeaderNav>

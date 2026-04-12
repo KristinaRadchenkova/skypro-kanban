@@ -1,9 +1,16 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as S from "./PopBrowse.styled";
 import Calendar from "../Calendar/Calendar";
+import { tasksAPI } from "../../services/api.js";
 
 const PopBrowse = ({ card }) => {
   const navigate = useNavigate();
+  const [isEditing, setIsEditing] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState(
+    card?.status || "Без статуса",
+  );
+  const [isUpdating, setIsUpdating] = useState(false);
 
   if (!card) return null;
 
@@ -11,6 +18,46 @@ const PopBrowse = ({ card }) => {
     e.preventDefault();
     navigate("/");
   };
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleStatusSelect = (status) => {
+    setSelectedStatus(status);
+  };
+
+  const handleSave = async () => {
+    if (selectedStatus === card.status) {
+      setIsEditing(false);
+      return;
+    }
+
+    setIsUpdating(true);
+    try {
+      await tasksAPI.updateStatus(card._id, selectedStatus);
+      setIsEditing(false);
+      window.location.reload();
+    } catch (err) {
+      console.error("Error updating status:", err);
+      alert("Ошибка при обновлении статуса");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setSelectedStatus(card.status);
+    setIsEditing(false);
+  };
+
+  const statuses = [
+    "Без статуса",
+    "Нужно сделать",
+    "В работе",
+    "Тестирование",
+    "Готово",
+  ];
 
   return (
     <S.PopBrowseContainer id="popBrowse">
@@ -21,35 +68,33 @@ const PopBrowse = ({ card }) => {
               <S.PopBrowseTitle>{card.title}</S.PopBrowseTitle>
               <S.ThemeTop
                 $color={
-                  card.theme === "Web Design"
+                  card.topic === "Web Design"
                     ? "orange"
-                    : card.theme === "Research"
+                    : card.topic === "Research"
                       ? "green"
                       : "purple"
                 }
               >
-                <p>{card.theme}</p>
+                <p>{card.topic}</p>
               </S.ThemeTop>
             </S.PopBrowseTopBlock>
 
             <S.StatusBlock>
               <S.StatusTitle>Статус</S.StatusTitle>
               <S.StatusThemes>
-                <S.StatusTheme $isActive={card.status === "Без статуса"}>
-                  Без статуса
-                </S.StatusTheme>
-                <S.StatusTheme $isActive={card.status === "Нужно сделать"}>
-                  Нужно сделать
-                </S.StatusTheme>
-                <S.StatusTheme $isActive={card.status === "В работе"}>
-                  В работе
-                </S.StatusTheme>
-                <S.StatusTheme $isActive={card.status === "Тестирование"}>
-                  Тестирование
-                </S.StatusTheme>
-                <S.StatusTheme $isActive={card.status === "Готово"}>
-                  Готово
-                </S.StatusTheme>
+                {statuses.map((status) => (
+                  <S.StatusTheme
+                    key={status}
+                    $isActive={
+                      (!isEditing && selectedStatus === status) ||
+                      (isEditing && selectedStatus === status)
+                    }
+                    onClick={() => isEditing && handleStatusSelect(status)}
+                    style={{ cursor: isEditing ? "pointer" : "default" }}
+                  >
+                    {status}
+                  </S.StatusTheme>
+                ))}
               </S.StatusThemes>
             </S.StatusBlock>
 
@@ -59,7 +104,7 @@ const PopBrowse = ({ card }) => {
                   <S.FormBrowseLabel>Описание задачи</S.FormBrowseLabel>
                   <S.FormBrowseTextarea
                     placeholder="Введите описание задачи..."
-                    value="Описание задачи будет здесь"
+                    value={card.description || "Нет описания"}
                     readOnly
                   />
                 </S.FormBrowseBlock>
@@ -70,21 +115,38 @@ const PopBrowse = ({ card }) => {
             <S.ThemeDownBlock>
               <S.ThemeDown
                 $color={
-                  card.theme === "Web Design"
+                  card.topic === "Web Design"
                     ? "orange"
-                    : card.theme === "Research"
+                    : card.topic === "Research"
                       ? "green"
                       : "purple"
                 }
               >
-                <p>{card.theme}</p>
+                <p>{card.topic}</p>
               </S.ThemeDown>
             </S.ThemeDownBlock>
 
             <S.ButtonGroup>
               <div className="btn-group">
-                <S.ButtonEdit $primary>Редактировать задачу</S.ButtonEdit>
-                <S.ButtonClose onClick={handleClose}>Закрыть</S.ButtonClose>
+                {isEditing ? (
+                  <>
+                    <S.ButtonEdit
+                      $primary
+                      onClick={handleSave}
+                      disabled={isUpdating}
+                    >
+                      {isUpdating ? "Сохранение..." : "Сохранить"}
+                    </S.ButtonEdit>
+                    <S.ButtonClose onClick={handleCancel}>Отмена</S.ButtonClose>
+                  </>
+                ) : (
+                  <>
+                    <S.ButtonEdit $primary onClick={handleEditClick}>
+                      Редактировать задачу
+                    </S.ButtonEdit>
+                    <S.ButtonClose onClick={handleClose}>Закрыть</S.ButtonClose>
+                  </>
+                )}
               </div>
             </S.ButtonGroup>
           </S.PopBrowseContent>

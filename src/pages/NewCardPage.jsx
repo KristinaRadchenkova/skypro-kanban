@@ -16,7 +16,7 @@ const NewCardPage = () => {
     <Wrapper>
       <Header />
       <NewCardContainer>
-        <Main />
+        <Main hideDataFetch={true} />
         <PopNewCard />
       </NewCardContainer>
     </Wrapper>

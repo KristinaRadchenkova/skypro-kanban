@@ -86,12 +86,27 @@ const CardPage = () => {
     }
   }, [id]);
 
+  const handleCardUpdate = (updatedCardData) => {
+    setCard((prevCard) => ({
+      ...prevCard,
+      ...updatedCardData,
+      theme:
+        updatedCardData.topic === "Web Design"
+          ? "orange"
+          : updatedCardData.topic === "Research"
+            ? "green"
+            : updatedCardData.topic === "Copywriting"
+              ? "purple"
+              : prevCard.theme,
+    }));
+  };
+
   if (isLoading) {
     return (
       <Wrapper>
         <Header />
         <CardPageContainer>
-          <Main />
+          <Main hideDataFetch={true} />
           <LoadingContainer>Загрузка данных...</LoadingContainer>
         </CardPageContainer>
       </Wrapper>
@@ -103,7 +118,7 @@ const CardPage = () => {
       <Wrapper>
         <Header />
         <CardPageContainer>
-          <Main />
+          <Main hideDataFetch={true} />
           <ErrorContainer>
             <ErrorText>{error}</ErrorText>
             <RetryButton onClick={fetchCard}>Повторить попытку</RetryButton>
@@ -117,8 +132,8 @@ const CardPage = () => {
     <Wrapper>
       <Header />
       <CardPageContainer>
-        <Main />
-        {card && <PopBrowse card={card} />}
+        <Main hideDataFetch={true} />
+        {card && <PopBrowse card={card} onCardUpdate={handleCardUpdate} />}
       </CardPageContainer>
     </Wrapper>
   );

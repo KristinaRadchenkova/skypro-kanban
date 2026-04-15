@@ -54,6 +54,10 @@ export const NavAction = styled.div`
   svg {
     fill: #94a6be;
   }
+
+  &:hover svg {
+    fill: #565eef;
+  }
 `;
 
 export const CalendarContent = styled.div`
@@ -109,15 +113,14 @@ export const Cell = styled.div`
   font-size: 10px;
   line-height: 1;
   letter-spacing: -0.2px;
-  cursor: pointer;
+  cursor: ${(props) => (props.$isClickable ? "pointer" : "default")};
 
   ${(props) =>
     props.$isOtherMonth &&
     css`
       opacity: 0;
+      pointer-events: none;
     `}
-
-  ${(props) => props.$isWeekend && css``}
 
   ${(props) =>
     props.$isCurrent &&
@@ -135,6 +138,7 @@ export const Cell = styled.div`
   &:hover {
     ${(props) =>
       props.$isClickable &&
+      !props.$isOtherMonth &&
       css`
         color: #94a6be;
         background-color: #eaeef6;
@@ -154,18 +158,20 @@ export const HiddenInput = styled.input`
 
 export const CalendarPeriod = styled.div`
   padding: 0 7px;
+  margin-top: 10px;
 `;
 
 export const PeriodText = styled.p`
-  color: #94a6be;
+  color: #000;
   font-size: 10px;
   line-height: 1;
-
-  span {
-    color: #000000;
-  }
 
   @media screen and (max-width: ${(props) => props.theme.breakpoints.mobile}) {
     font-size: 14px;
   }
+`;
+
+export const PeriodDate = styled.span`
+  color: #000;
+  font-weight: 600;
 `;

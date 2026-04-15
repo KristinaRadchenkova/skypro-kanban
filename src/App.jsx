@@ -9,7 +9,6 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Проверяем наличие токена при загрузке приложения
     const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
 

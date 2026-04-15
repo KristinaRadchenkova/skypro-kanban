@@ -11,6 +11,7 @@ const PopNewCard = () => {
     description: "",
     theme: "Web Design",
     status: "Без статуса",
+    date: new Date(),
   });
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -29,6 +30,10 @@ const PopNewCard = () => {
     setFormData((prev) => ({ ...prev, theme }));
   };
 
+  const handleDateSelect = (date) => {
+    setFormData((prev) => ({ ...prev, date }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -43,9 +48,6 @@ const PopNewCard = () => {
     try {
       await tasksAPI.create(formData);
       navigate("/");
-      setTimeout(() => {
-        window.location.reload();
-      }, 100);
     } catch (err) {
       console.error("Error creating task:", err);
       setError(err.message || "Ошибка при создании задачи");
@@ -95,7 +97,11 @@ const PopNewCard = () => {
                   />
                 </S.FormNewBlock>
               </S.PopNewCardForm>
-              <Calendar mode="new" />
+              <Calendar
+                mode="new"
+                selectedDate={formData.date}
+                onDateSelect={handleDateSelect}
+              />
             </S.PopNewCardWrap>
             <S.CategoriesBlock>
               <S.CategoriesTitle>Категория</S.CategoriesTitle>
@@ -123,13 +129,15 @@ const PopNewCard = () => {
                 </S.CategoryTheme>
               </S.CategoriesThemes>
             </S.CategoriesBlock>
-            <S.FormNewCreateButton
-              type="submit"
-              onClick={handleSubmit}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Создание..." : "Создать задачу"}
-            </S.FormNewCreateButton>
+            <S.Footer>
+              <S.PrimaryButton
+                type="submit"
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Создание..." : "Создать задачу"}
+              </S.PrimaryButton>
+            </S.Footer>
           </S.PopNewCardContent>
         </S.PopNewCardBlock>
       </S.PopNewCardWrapper>

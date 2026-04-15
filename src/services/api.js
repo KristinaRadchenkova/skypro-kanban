@@ -1,6 +1,10 @@
 const KANBAN_API_URL = "https://wedev-api.sky.pro/api/kanban";
 const AUTH_API_URL = "https://wedev-api.sky.pro/api/user";
 
+let tasksCache = null;
+let tasksCacheTime = null;
+const CACHE_DURATION = 5 * 60 * 1000;
+
 const getAuthHeaders = () => {
   const token = localStorage.getItem("token");
   return {
@@ -8,17 +12,23 @@ const getAuthHeaders = () => {
   };
 };
 
+let navigateFunction = null;
+
+export const setNavigate = (navigate) => {
+  navigateFunction = navigate;
+};
+
 const handleResponse = async (response) => {
   if (!response.ok) {
     if (response.status === 401) {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      if (
-        typeof window !== "undefined" &&
-        !window.location.pathname.includes("/login")
-      ) {
-        window.location.href = "/login";
+      clearTasksCache();
+
+      if (navigateFunction) {
+        navigateFunction("/login");
       }
+
       throw new Error("Сессия истекла. Пожалуйста, войдите снова.");
     }
 
@@ -30,19 +40,54 @@ const handleResponse = async (response) => {
   return response.json();
 };
 
+export const clearTasksCache = () => {
+  tasksCache = null;
+  tasksCacheTime = null;
+};
+
+const isCacheValid = () => {
+  return (
+    tasksCache && tasksCacheTime && Date.now() - tasksCacheTime < CACHE_DURATION
+  );
+};
+
+const setTasksCache = (tasks) => {
+  tasksCache = tasks;
+  tasksCacheTime = Date.now();
+};
+
+const getTasksFromCache = () => {
+  return isCacheValid() ? tasksCache : null;
+};
+
 export const tasksAPI = {
-  getAll: async () => {
+  getAll: async (forceRefresh = false) => {
     const token = localStorage.getItem("token");
     if (!token) {
       throw new Error("Нет токена авторизации");
     }
 
+    if (!forceRefresh) {
+      const cachedTasks = getTasksFromCache();
+      if (cachedTasks) {
+        console.log("Returning tasks from cache");
+        return cachedTasks;
+      }
+    }
+
+    console.log("Fetching tasks from server");
     const response = await fetch(KANBAN_API_URL, {
       method: "GET",
       headers: getAuthHeaders(),
     });
     const data = await handleResponse(response);
-    return data.tasks || [];
+    const tasks = data.tasks || [];
+    setTasksCache(tasks);
+    return tasks;
+  },
+
+  getTasksFromCache: () => {
+    return getTasksFromCache();
   },
 
   getById: async (id) => {
@@ -51,6 +96,16 @@ export const tasksAPI = {
       throw new Error("Нет токена авторизации");
     }
 
+    const cachedTasks = getTasksFromCache();
+    if (cachedTasks) {
+      const cachedTask = cachedTasks.find((task) => task._id === id);
+      if (cachedTask) {
+        console.log("Returning task from cache");
+        return cachedTask;
+      }
+    }
+
+    console.log("Fetching task from server");
     const response = await fetch(`${KANBAN_API_URL}/${id}`, {
       method: "GET",
       headers: getAuthHeaders(),
@@ -81,7 +136,9 @@ export const tasksAPI = {
       body: JSON.stringify(taskToSend),
     });
     const data = await handleResponse(response);
-    return data.tasks || [];
+    const tasks = data.tasks || [];
+    setTasksCache(tasks);
+    return tasks;
   },
 
   update: async (id, taskData) => {
@@ -104,7 +161,9 @@ export const tasksAPI = {
       }),
     });
     const data = await handleResponse(response);
-    return data.tasks || [];
+    const tasks = data.tasks || [];
+    setTasksCache(tasks);
+    return tasks;
   },
 
   delete: async (id) => {
@@ -118,22 +177,34 @@ export const tasksAPI = {
       headers: getAuthHeaders(),
     });
     const data = await handleResponse(response);
-    return data.tasks || [];
+    const tasks = data.tasks || [];
+    setTasksCache(tasks);
+    return tasks;
   },
 
   updateStatus: async (id, status) => {
     const task = await tasksAPI.getById(id);
-    return tasksAPI.update(id, {
+
+    const cachedTasks = getTasksFromCache();
+    if (cachedTasks) {
+      const updatedTasks = cachedTasks.map((task) =>
+        task._id === id ? { ...task, status } : task,
+      );
+      setTasksCache(updatedTasks);
+    }
+
+    const result = await tasksAPI.update(id, {
       ...task,
       status,
       theme: task.topic,
     });
+
+    return result;
   },
 };
 
 export const authAPI = {
   login: async (login, password) => {
-    // Убираем заголовок Content-Type, API не умеет с ним работать
     const response = await fetch(`${AUTH_API_URL}/login`, {
       method: "POST",
       body: JSON.stringify({ login, password }),
@@ -158,6 +229,7 @@ export const authAPI = {
           login: data.user.login,
         }),
       );
+      clearTasksCache();
     }
 
     return data;
@@ -190,6 +262,7 @@ export const authAPI = {
           login: data.user.login,
         }),
       );
+      clearTasksCache();
     }
 
     return data;
@@ -198,6 +271,7 @@ export const authAPI = {
   logout: () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    clearTasksCache();
   },
 
   getCurrentUser: () => {

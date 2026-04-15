@@ -13,12 +13,21 @@ import {
 } from "./Main.styled";
 import { Container } from "../App.styled";
 
-const Main = () => {
-  const [isLoading, setIsLoading] = useState(true);
+const Main = ({ hideDataFetch = false }) => {
+  const [isLoading, setIsLoading] = useState(!hideDataFetch);
   const [error, setError] = useState(null);
   const [cards, setCards] = useState([]);
 
-  const fetchTasks = async () => {
+  const fetchTasks = async (forceRefresh = false) => {
+    if (hideDataFetch) {
+      const cachedTasks = tasksAPI.getTasksFromCache?.();
+      if (cachedTasks) {
+        setCards(cachedTasks);
+      }
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
 
@@ -30,7 +39,7 @@ const Main = () => {
         throw new Error("Необходимо авторизоваться");
       }
 
-      const tasks = await tasksAPI.getAll();
+      const tasks = await tasksAPI.getAll(forceRefresh);
       console.log("Fetched tasks:", tasks);
       setCards(tasks);
     } catch (err) {
@@ -42,8 +51,16 @@ const Main = () => {
   };
 
   useEffect(() => {
-    fetchTasks();
-  }, []);
+    if (!hideDataFetch) {
+      fetchTasks();
+    } else {
+      const cachedTasks = tasksAPI.getTasksFromCache?.();
+      if (cachedTasks) {
+        setCards(cachedTasks);
+      }
+      setIsLoading(false);
+    }
+  }, [hideDataFetch]);
 
   const columns = [
     { title: "Без статуса", status: "Без статуса" },
@@ -86,7 +103,9 @@ const Main = () => {
         <Container>
           <ErrorContainer>
             <ErrorText>{error}</ErrorText>
-            <RetryButton onClick={fetchTasks}>Повторить попытку</RetryButton>
+            <RetryButton onClick={() => fetchTasks(true)}>
+              Повторить попытку
+            </RetryButton>
           </ErrorContainer>
         </Container>
       </MainContainer>

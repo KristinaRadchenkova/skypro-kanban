@@ -232,8 +232,50 @@ export const CategoryTheme = styled.div`
   }
 `;
 
-export const FormNewCreateButton = styled.button`
-  height: 40px;
+export const Footer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 20px;
+
+  @media screen and (max-width: ${(props) => props.theme.breakpoints.mobile}) {
+    justify-content: stretch;
+  }
+`;
+
+export const OutlineButton = styled.button`
+  height: 30px;
+  padding: 0 14px;
+  border-radius: 4px;
+  background-color: transparent;
+  border: 0.7px solid #565eef;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  color: #565eef;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: #33399b;
+    border-color: #33399b;
+    color: #ffffff;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  @media screen and (max-width: ${(props) => props.theme.breakpoints.mobile}) {
+    width: 100%;
+    height: 40px;
+  }
+`;
+
+export const PrimaryButton = styled.button`
+  height: 30px;
   padding: 0 14px;
   border-radius: 4px;
   background-color: #565eef;
@@ -244,9 +286,15 @@ export const FormNewCreateButton = styled.button`
   color: #ffffff;
   cursor: pointer;
   transition: background-color 0.2s;
+  white-space: nowrap;
 
   &:hover {
     background-color: #33399b;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 
   @media screen and (max-width: ${(props) => props.theme.breakpoints.mobile}) {
@@ -263,4 +311,8 @@ export const ErrorMessage = styled.div`
   margin-bottom: 20px;
   font-size: 14px;
   text-align: center;
+`;
+
+export const FormNewCreateButton = styled(PrimaryButton)`
+  margin-top: 20px;
 `;

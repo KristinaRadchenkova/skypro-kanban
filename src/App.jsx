@@ -5,16 +5,39 @@ import { GlobalStyles } from "./GlobalStyles";
 import AppRoutes from "./components/AppRoutes";
 
 function App() {
-  const [isAuth, setIsAuth] = useState(() => {
-    // Проверяем localStorage при инициализации
-    const savedAuth = localStorage.getItem("isAuth");
-    return savedAuth ? JSON.parse(savedAuth) : false;
-  });
+  const [isAuth, setIsAuth] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Сохраняем состояние авторизации при его изменении
   useEffect(() => {
-    localStorage.setItem("isAuth", JSON.stringify(isAuth));
-  }, [isAuth]);
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+
+    console.log("App init - token exists:", !!token);
+    console.log("App init - user exists:", !!user);
+
+    if (token && user) {
+      setIsAuth(true);
+    } else {
+      setIsAuth(false);
+    }
+    setIsLoading(false);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          fontFamily: "Arial, sans-serif",
+        }}
+      >
+        Загрузка приложения...
+      </div>
+    );
+  }
 
   return (
     <ThemeProvider theme={theme}>

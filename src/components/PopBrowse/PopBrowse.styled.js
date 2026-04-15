@@ -26,7 +26,7 @@ export const PopBrowseWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: transparent; /* Убираем затемнение */
+  background: transparent;
   pointer-events: none;
 
   @media screen and (max-width: 660px) {
@@ -57,7 +57,6 @@ export const PopBrowseBlock = styled.div`
   }
 `;
 
-// Остальные стили остаются без изменений...
 export const PopBrowseContent = styled.div`
   display: block;
   text-align: left;
@@ -77,7 +76,7 @@ export const PopBrowseTitle = styled.h3`
   line-height: 24px;
 `;
 
-export const ThemeTop = styled.div`
+export const CategoryBadge = styled.div`
   display: inline-block;
   width: auto;
   height: 30px;
@@ -89,47 +88,37 @@ export const ThemeTop = styled.div`
       case "orange":
         return css`
           background-color: #ffe4c2;
-          p {
-            color: #ff6d00;
-          }
+          color: #ff6d00;
         `;
       case "green":
         return css`
           background-color: #b4fdd1;
-          p {
-            color: #06b16e;
-          }
+          color: #06b16e;
         `;
       case "purple":
         return css`
           background-color: #e9d4ff;
-          p {
-            color: #9a48f1;
-          }
+          color: #9a48f1;
         `;
       default:
         return css`
           background-color: #ffe4c2;
-          p {
-            color: #ff6d00;
-          }
+          color: #ff6d00;
         `;
     }
   }}
 
-  p {
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 14px;
-    white-space: nowrap;
-  }
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 14px;
+  white-space: nowrap;
 `;
 
-export const StatusBlock = styled.div`
-  margin-bottom: 11px;
+export const StatusSection = styled.div`
+  margin-bottom: 24px;
 `;
 
-export const StatusTitle = styled.p`
+export const SectionLabel = styled.p`
   margin-bottom: 14px;
   color: #000;
   font-size: 14px;
@@ -137,7 +126,7 @@ export const StatusTitle = styled.p`
   line-height: 1;
 `;
 
-export const StatusThemes = styled.div`
+export const StatusList = styled.div`
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
@@ -145,7 +134,7 @@ export const StatusThemes = styled.div`
   gap: 8px;
 `;
 
-export const StatusTheme = styled.div`
+export const StatusItem = styled.div`
   border-radius: 24px;
   padding: 11px 14px 10px;
   background-color: ${(props) => (props.$isActive ? "#94a6be" : "#eaeef6")};
@@ -154,16 +143,23 @@ export const StatusTheme = styled.div`
   font-weight: 600;
   line-height: 1;
   white-space: nowrap;
-  cursor: pointer;
-  opacity: ${(props) => (props.$isHidden ? "0" : "1")};
-  pointer-events: ${(props) => (props.$isHidden ? "none" : "auto")};
+  cursor: ${(props) => (props.$isClickable ? "pointer" : "default")};
+  transition: all 0.2s;
+  display: inline-block;
 
   &:hover {
-    background-color: ${(props) => (props.$isActive ? "#94a6be" : "#dbe2ed")};
+    background-color: ${(props) =>
+      props.$isClickable
+        ? props.$isActive
+          ? "#94a6be"
+          : "#dbe2ed"
+        : props.$isActive
+          ? "#94a6be"
+          : "#eaeef6"};
   }
 `;
 
-export const PopBrowseWrap = styled.div`
+export const ContentSection = styled.div`
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -174,7 +170,7 @@ export const PopBrowseWrap = styled.div`
   }
 `;
 
-export const PopBrowseForm = styled.form`
+export const DescriptionSection = styled.div`
   max-width: 370px;
   width: 100%;
   margin-bottom: 20px;
@@ -184,150 +180,55 @@ export const PopBrowseForm = styled.form`
   }
 `;
 
-export const FormBrowseBlock = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-export const FormBrowseLabel = styled.label`
-  color: #000;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1;
-`;
-
-export const FormBrowseTextarea = styled.textarea`
-  max-width: 370px;
+export const DescriptionText = styled.p`
   width: 100%;
-  outline: none;
   padding: 14px;
   background: #eaeef6;
   border: 0.7px solid rgba(148, 166, 190, 0.4);
   border-radius: 8px;
   font-size: 14px;
-  line-height: 1;
+  line-height: 1.4;
   letter-spacing: -0.14px;
   margin-top: 14px;
-  height: 200px;
-  resize: none;
+  min-height: 200px;
+  color: #000;
+`;
 
-  &::placeholder {
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 1px;
-    color: #94a6be;
-    letter-spacing: -0.14px;
-  }
+export const CalendarSection = styled.div`
+  margin-left: 20px;
+  min-width: 182px;
 
   @media screen and (max-width: ${(props) => props.theme.breakpoints.mobile}) {
-    max-width: 100%;
-    height: 34px;
+    margin-left: 0;
+    margin-top: 20px;
+    min-width: 100%;
   }
 `;
 
-export const ThemeDownBlock = styled.div`
-  margin: 20px 0;
-`;
-
-export const ThemeDown = styled.div`
-  display: inline-block;
-  width: auto;
-  height: 30px;
-  padding: 8px 20px;
-  border-radius: 24px;
-  margin-top: 14px;
-
-  ${(props) => {
-    switch (props.$color) {
-      case "orange":
-        return css`
-          background-color: #ffe4c2;
-          p {
-            color: #ff6d00;
-          }
-        `;
-      case "green":
-        return css`
-          background-color: #b4fdd1;
-          p {
-            color: #06b16e;
-          }
-        `;
-      case "purple":
-        return css`
-          background-color: #e9d4ff;
-          p {
-            color: #9a48f1;
-          }
-        `;
-      default:
-        return css`
-          background-color: #ffe4c2;
-          p {
-            color: #ff6d00;
-          }
-        `;
-    }
-  }}
-
-  p {
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 14px;
-    white-space: nowrap;
-  }
-`;
-
-export const ButtonGroup = styled.div`
+export const Footer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  .btn-group {
-    display: flex;
-    gap: 8px;
-  }
+  margin-top: 20px;
+  gap: 8px;
 
   @media screen and (max-width: ${(props) => props.theme.breakpoints.mobile}) {
     flex-direction: column;
     gap: 10px;
-
-    .btn-group {
-      width: 100%;
-      flex-direction: column;
-    }
   }
 `;
 
-export const ButtonBrowse = styled.button`
-  height: 30px;
-  padding: 0 14px;
-  border-radius: 4px;
-  background-color: #565eef;
-  border: none;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1;
-  color: #ffffff;
-  cursor: pointer;
-  transition: background-color 0.2s;
-
-  a {
-    color: #ffffff;
-    text-decoration: none;
-  }
-
-  &:hover {
-    background-color: #33399b;
-  }
+export const ButtonGroupLeft = styled.div`
+  display: flex;
+  gap: 8px;
 
   @media screen and (max-width: ${(props) => props.theme.breakpoints.mobile}) {
     width: 100%;
-    height: 40px;
+    flex-direction: column;
   }
 `;
 
-export const ButtonClose = styled.button`
+export const OutlineButton = styled.button`
   height: 30px;
   padding: 0 14px;
   border-radius: 4px;
@@ -339,20 +240,47 @@ export const ButtonClose = styled.button`
   color: #565eef;
   cursor: pointer;
   transition: all 0.2s;
-
-  a {
-    color: #565eef;
-    text-decoration: none;
-  }
+  white-space: nowrap;
 
   &:hover {
     background-color: #33399b;
     border-color: #33399b;
     color: #ffffff;
+  }
 
-    a {
-      color: #ffffff;
-    }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  @media screen and (max-width: ${(props) => props.theme.breakpoints.mobile}) {
+    flex: 1;
+    height: 40px;
+    white-space: normal;
+  }
+`;
+
+export const PrimaryButton = styled.button`
+  height: 30px;
+  padding: 0 14px;
+  border-radius: 4px;
+  background-color: #565eef;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: #33399b;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 
   @media screen and (max-width: ${(props) => props.theme.breakpoints.mobile}) {
@@ -360,6 +288,79 @@ export const ButtonClose = styled.button`
     height: 40px;
   }
 `;
+
+export const EditButton = styled(OutlineButton)``;
+export const DeleteButton = styled(OutlineButton)``;
+export const SaveButton = styled(OutlineButton)``;
+export const CloseButton = styled(PrimaryButton)``;
+export const CancelButton = styled(OutlineButton)``;
+
+export const ThemeTop = styled(CategoryBadge)``;
+export const StatusBlock = styled(StatusSection)``;
+export const StatusTitle = styled(SectionLabel)``;
+export const StatusThemes = styled(StatusList)``;
+export const StatusTheme = styled(StatusItem)``;
+export const PopBrowseWrap = styled(ContentSection)``;
+export const PopBrowseForm = styled(DescriptionSection)``;
+
+export const FormBrowseBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const FormBrowseLabel = styled(SectionLabel)``;
+
+export const FormBrowseTextarea = styled.textarea`
+  max-width: 370px;
+  width: 100%;
+  outline: none;
+  padding: 14px;
+  background: #eaeef6;
+  border: 0.7px solid rgba(148, 166, 190, 0.4);
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.4;
+  letter-spacing: -0.14px;
+  margin-top: 14px;
+  height: 200px;
+  resize: none;
+
+  &::placeholder {
+    font-weight: 400;
+    font-size: 14px;
+    color: #94a6be;
+    letter-spacing: -0.14px;
+  }
+
+  &:read-only {
+    cursor: default;
+  }
+
+  @media screen and (max-width: ${(props) => props.theme.breakpoints.mobile}) {
+    max-width: 100%;
+    height: 150px;
+  }
+`;
+
+export const DateBlock = styled(CalendarSection)``;
+export const CalendarTitle = styled(SectionLabel)``;
+
+export const PeriodText = styled.p`
+  color: #94a6be;
+  font-size: 14px;
+  line-height: 1;
+  margin-top: 14px;
+`;
+
+export const ThemeDownBlock = styled.div`
+  margin: 20px 0;
+`;
+
+export const ThemeDown = styled(CategoryBadge)`
+  margin-top: 14px;
+`;
+
+export const ButtonBrowse = styled(PrimaryButton)``;
 
 export const ButtonEdit = styled.button`
   height: 30px;
@@ -378,10 +379,6 @@ export const ButtonEdit = styled.button`
           border: none;
           color: #ffffff;
 
-          a {
-            color: #ffffff;
-          }
-
           &:hover {
             background-color: #33399b;
           }
@@ -391,22 +388,29 @@ export const ButtonEdit = styled.button`
           border: 0.7px solid #94a6be;
           color: #94a6be;
 
-          a {
-            color: #94a6be;
-          }
-
           &:hover {
             background-color: #dbe2ed;
           }
         `}
 
-  a {
-    text-decoration: none;
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 
   @media screen and (max-width: ${(props) => props.theme.breakpoints.mobile}) {
     width: 100%;
     height: 40px;
+  }
+`;
+
+export const ButtonGroup = styled.div`
+  display: flex;
+  gap: 8px;
+
+  @media screen and (max-width: ${(props) => props.theme.breakpoints.mobile}) {
+    width: 100%;
+    flex-direction: column;
   }
 `;
 

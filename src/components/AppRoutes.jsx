@@ -1,4 +1,5 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import ProtectedRoute from "./ProtectedRoute";
 import BoardPage from "../pages/BoardPage";
 import LoginPage from "../pages/LoginPage";
@@ -7,8 +8,15 @@ import CardPage from "../pages/CardPage";
 import NewCardPage from "../pages/NewCardPage";
 import ExitPage from "../pages/ExitPage";
 import NotFoundPage from "../pages/NotFoundPage";
+import { setNavigate } from "../services/api";
 
 const AppRoutes = ({ isAuth, setIsAuth }) => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setNavigate(navigate);
+  }, [navigate]);
+
   return (
     <Routes>
       <Route

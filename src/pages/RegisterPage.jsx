@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import styled from "styled-components";
+import { useAuth } from "../contexts/AuthContext";
 
 const RegisterContainer = styled.div`
   display: flex;
@@ -45,6 +46,11 @@ const Input = styled.input`
   &::placeholder {
     color: #94a6be;
   }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 `;
 
 const RegisterButton = styled.button`
@@ -60,6 +66,11 @@ const RegisterButton = styled.button`
 
   &:hover {
     background-color: ${(props) => props.theme.colors.primaryHover};
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 `;
 
@@ -81,49 +92,118 @@ const LoginLink = styled(Link)`
   }
 `;
 
-const RegisterPage = ({ setIsAuth }) => {
+const ErrorMessage = styled.div`
+  background-color: #fee;
+  color: #c33;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  text-align: center;
+`;
+
+const SuccessMessage = styled.div`
+  background-color: #e6f7e6;
+  color: #2d7a2d;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  text-align: center;
+`;
+
+const RegisterPage = () => {
+  const [login, setLogin] = useState("");
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { register: authRegister } = useAuth();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Здесь будет логика регистрации
-    if (password !== confirmPassword) {
-      alert("Пароли не совпадают");
+    setError("");
+    setSuccess("");
+
+    if (!login.trim()) {
+      setError("Введите логин");
       return;
     }
-    setIsAuth(true);
-    navigate("/");
+
+    if (login.length < 3) {
+      setError("Логин должен содержать минимум 3 символа");
+      return;
+    }
+
+    if (!name.trim()) {
+      setError("Введите имя");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Пароли не совпадают");
+      return;
+    }
+
+    if (password.length < 3) {
+      setError("Пароль должен содержать минимум 3 символа");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      await authRegister(login, name, password);
+      setSuccess("Регистрация прошла успешно! Перенаправление...");
+      setTimeout(() => {
+        navigate("/");
+      }, 1000);
+    } catch (err) {
+      console.error("Registration error:", err);
+      setError(
+        err.message || "Ошибка при регистрации. Попробуйте другой логин.",
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <RegisterContainer>
       <RegisterBlock>
         <RegisterTitle>Регистрация</RegisterTitle>
+        {error && <ErrorMessage>{error}</ErrorMessage>}
+        {success && <SuccessMessage>{success}</SuccessMessage>}
         <RegisterForm onSubmit={handleSubmit}>
           <Input
             type="text"
-            placeholder="Имя"
+            placeholder="Логин (минимум 3 символа)"
+            value={login}
+            onChange={(e) => setLogin(e.target.value)}
+            required
+            disabled={isLoading}
+            autoComplete="username"
+          />
+          <Input
+            type="text"
+            placeholder="Ваше имя"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-          />
-          <Input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
+            disabled={isLoading}
+            autoComplete="name"
           />
           <Input
             type="password"
-            placeholder="Пароль"
+            placeholder="Пароль (минимум 3 символа)"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            disabled={isLoading}
+            autoComplete="new-password"
           />
           <Input
             type="password"
@@ -131,8 +211,12 @@ const RegisterPage = ({ setIsAuth }) => {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
+            disabled={isLoading}
+            autoComplete="new-password"
           />
-          <RegisterButton type="submit">Зарегистрироваться</RegisterButton>
+          <RegisterButton type="submit" disabled={isLoading}>
+            {isLoading ? "Регистрация..." : "Зарегистрироваться"}
+          </RegisterButton>
           <FormGroup>
             <p>
               Уже есть аккаунт? <LoginLink to="/login">Войти</LoginLink>

@@ -1,4 +1,5 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import ProtectedRoute from "./ProtectedRoute";
 import BoardPage from "../pages/BoardPage";
 import LoginPage from "../pages/LoginPage";
@@ -7,14 +8,23 @@ import CardPage from "../pages/CardPage";
 import NewCardPage from "../pages/NewCardPage";
 import ExitPage from "../pages/ExitPage";
 import NotFoundPage from "../pages/NotFoundPage";
+import { setNavigate } from "../services/api";
+import { useAuth } from "../contexts/AuthContext";
 
-const AppRoutes = ({ isAuth, setIsAuth }) => {
+const AppRoutes = () => {
+  const navigate = useNavigate();
+  const { isAuth, setIsAuth } = useAuth();
+
+  useEffect(() => {
+    setNavigate(navigate);
+  }, [navigate]);
+
   return (
     <Routes>
       <Route
         path="/"
         element={
-          <ProtectedRoute isAuth={isAuth}>
+          <ProtectedRoute>
             <BoardPage />
           </ProtectedRoute>
         }
@@ -22,7 +32,7 @@ const AppRoutes = ({ isAuth, setIsAuth }) => {
       <Route
         path="/card/:id"
         element={
-          <ProtectedRoute isAuth={isAuth}>
+          <ProtectedRoute>
             <CardPage />
           </ProtectedRoute>
         }
@@ -30,7 +40,7 @@ const AppRoutes = ({ isAuth, setIsAuth }) => {
       <Route
         path="/new"
         element={
-          <ProtectedRoute isAuth={isAuth}>
+          <ProtectedRoute>
             <NewCardPage />
           </ProtectedRoute>
         }
@@ -38,16 +48,13 @@ const AppRoutes = ({ isAuth, setIsAuth }) => {
       <Route
         path="/exit"
         element={
-          <ProtectedRoute isAuth={isAuth}>
-            <ExitPage setIsAuth={setIsAuth} />
+          <ProtectedRoute>
+            <ExitPage />
           </ProtectedRoute>
         }
       />
-      <Route path="/login" element={<LoginPage setIsAuth={setIsAuth} />} />
-      <Route
-        path="/register"
-        element={<RegisterPage setIsAuth={setIsAuth} />}
-      />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

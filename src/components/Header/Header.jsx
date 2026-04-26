@@ -11,11 +11,13 @@ import {
   HeaderUser,
 } from "./Header.styled";
 import { Container } from "../App.styled";
+import { useAuth } from "../../contexts/AuthContext";
 
 const Header = () => {
   const [isUserPopupOpen, setIsUserPopupOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const handleUserNameClick = (e) => {
     e.preventDefault();
@@ -40,6 +42,8 @@ const Header = () => {
     setIsConfirmOpen(false);
   };
 
+  const userName = user?.name || "Пользователь";
+
   return (
     <HeaderContainer>
       <Container>
@@ -59,7 +63,7 @@ const Header = () => {
               Создать новую задачу
             </HeaderBtnMainNew>
             <HeaderUser href="#" onClick={handleUserNameClick}>
-              Ivan Ivanov
+              {userName}
             </HeaderUser>
             <PopUser isOpen={isUserPopupOpen} onExitClick={handleExitClick} />
           </HeaderNav>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import styled from "styled-components";
-import { authAPI } from "../services/api";
+import { useAuth } from "../contexts/AuthContext";
 
 const LoginContainer = styled.div`
   display: flex;
@@ -112,20 +112,20 @@ const SuccessMessage = styled.div`
   text-align: center;
 `;
 
-const LoginPage = ({ setIsAuth }) => {
+const LoginPage = () => {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { isAuth, login: authLogin } = useAuth();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
+    if (isAuth) {
       navigate("/");
     }
-  }, [navigate]);
+  }, [isAuth, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -146,10 +146,8 @@ const LoginPage = ({ setIsAuth }) => {
     }
 
     try {
-      const result = await authAPI.login(login, password);
-      console.log("Login successful:", result);
+      await authLogin(login, password);
       setSuccess("Вход выполнен успешно! Перенаправление...");
-      setIsAuth(true);
       setTimeout(() => {
         navigate("/");
       }, 1000);

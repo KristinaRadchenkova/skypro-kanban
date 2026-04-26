@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import styled from "styled-components";
-import { authAPI } from "../services/api";
+import { useAuth } from "../contexts/AuthContext";
 
 const RegisterContainer = styled.div`
   display: flex;
@@ -112,7 +112,7 @@ const SuccessMessage = styled.div`
   text-align: center;
 `;
 
-const RegisterPage = ({ setIsAuth }) => {
+const RegisterPage = () => {
   const [login, setLogin] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
@@ -121,6 +121,7 @@ const RegisterPage = ({ setIsAuth }) => {
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { register: authRegister } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -155,11 +156,8 @@ const RegisterPage = ({ setIsAuth }) => {
     setIsLoading(true);
 
     try {
-      console.log("Attempting registration with:", { login, name });
-      const result = await authAPI.register(login, name, password);
-      console.log("Registration successful:", result);
+      await authRegister(login, name, password);
       setSuccess("Регистрация прошла успешно! Перенаправление...");
-      setIsAuth(true);
       setTimeout(() => {
         navigate("/");
       }, 1000);

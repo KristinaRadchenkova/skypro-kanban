@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import * as S from "./PopBrowse.styled";
 import Calendar from "../Calendar/Calendar.jsx";
-import { tasksAPI } from "../../services/api.js";
+import { useTasks } from "../../contexts/TaskContext.jsx";
 
 const PopBrowse = ({ card, onCardUpdate }) => {
   const navigate = useNavigate();
+  const { updateTask, deleteTask } = useTasks();
   const [isEditing, setIsEditing] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState(
     card?.status || "Без статуса",
@@ -64,30 +65,28 @@ const PopBrowse = ({ card, onCardUpdate }) => {
         ...card,
         status: selectedStatus,
         date: selectedDate,
-        description: description,
+        description: description.trim() || " ",
         theme: card.topic,
       };
 
-      await tasksAPI.update(card._id, updatedData);
+      await updateTask(card._id, updatedData);
 
       if (onCardUpdate) {
         onCardUpdate({
           status: selectedStatus,
           date: selectedDate,
-          description: description,
+          description: description.trim() || " ",
           topic: card.topic,
         });
       }
 
       setIsEditing(false);
     } catch (err) {
-      console.error("Error updating task:", err);
       alert("Ошибка при обновлении задачи");
     } finally {
       setIsUpdating(false);
     }
   };
-
   const handleDelete = async () => {
     if (!window.confirm("Вы уверены, что хотите удалить эту задачу?")) {
       return;
@@ -95,10 +94,9 @@ const PopBrowse = ({ card, onCardUpdate }) => {
 
     setIsDeleting(true);
     try {
-      await tasksAPI.delete(card._id);
+      await deleteTask(card._id);
       navigate("/");
     } catch (err) {
-      console.error("Error deleting task:", err);
       alert("Ошибка при удалении задачи");
     } finally {
       setIsDeleting(false);

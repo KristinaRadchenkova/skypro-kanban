@@ -2,10 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as S from "./PopNewCard.styled";
 import Calendar from "../Calendar/Calendar.jsx";
-import { tasksAPI } from "../../services/api.js";
+import { useTasks } from "../../contexts/TaskContext.jsx";
 
 const PopNewCard = () => {
   const navigate = useNavigate();
+  const { createTask } = useTasks();
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -34,7 +35,7 @@ const PopNewCard = () => {
     setFormData((prev) => ({ ...prev, date }));
   };
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -43,13 +44,26 @@ const PopNewCard = () => {
       return;
     }
 
+    if (formData.title.trim().length < 3) {
+      setError("Название задачи должно содержать минимум 3 символа");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      await tasksAPI.create(formData);
+      // Отправляем только нужные поля
+      const taskData = {
+        title: formData.title.trim(),
+        description: formData.description.trim() || " ",
+        theme: formData.theme,
+        status: formData.status,
+        date: formData.date,
+      };
+      
+      await createTask(taskData);
       navigate("/");
     } catch (err) {
-      console.error("Error creating task:", err);
       setError(err.message || "Ошибка при создании задачи");
     } finally {
       setIsSubmitting(false);

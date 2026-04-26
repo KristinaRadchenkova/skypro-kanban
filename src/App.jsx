@@ -1,27 +1,11 @@
-import { useState, useEffect } from "react";
 import { ThemeProvider } from "styled-components";
 import { theme } from "./theme/theme";
 import { GlobalStyles } from "./GlobalStyles";
 import AppRoutes from "./components/AppRoutes";
+import { useAuth } from "./contexts/AuthContext";
 
 function App() {
-  const [isAuth, setIsAuth] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-
-    console.log("App init - token exists:", !!token);
-    console.log("App init - user exists:", !!user);
-
-    if (token && user) {
-      setIsAuth(true);
-    } else {
-      setIsAuth(false);
-    }
-    setIsLoading(false);
-  }, []);
+  const { isLoading } = useAuth();
 
   if (isLoading) {
     return (
@@ -42,7 +26,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyles />
-      <AppRoutes isAuth={isAuth} setIsAuth={setIsAuth} />
+      <AppRoutes />
     </ThemeProvider>
   );
 }

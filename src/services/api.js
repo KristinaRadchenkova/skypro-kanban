@@ -70,12 +70,10 @@ export const tasksAPI = {
     if (!forceRefresh) {
       const cachedTasks = getTasksFromCache();
       if (cachedTasks) {
-        console.log("Returning tasks from cache");
         return cachedTasks;
       }
     }
 
-    console.log("Fetching tasks from server");
     const response = await fetch(KANBAN_API_URL, {
       method: "GET",
       headers: getAuthHeaders(),
@@ -100,12 +98,10 @@ export const tasksAPI = {
     if (cachedTasks) {
       const cachedTask = cachedTasks.find((task) => task._id === id);
       if (cachedTask) {
-        console.log("Returning task from cache");
         return cachedTask;
       }
     }
 
-    console.log("Fetching task from server");
     const response = await fetch(`${KANBAN_API_URL}/${id}`, {
       method: "GET",
       headers: getAuthHeaders(),

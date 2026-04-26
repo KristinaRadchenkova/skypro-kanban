@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import PopUser from "../PopUser/PopUser";
 import ConfirmModal from "../ConfirmModal/ConfirmModal";
@@ -11,23 +11,13 @@ import {
   HeaderUser,
 } from "./Header.styled";
 import { Container } from "../App.styled";
+import { useAuth } from "../../contexts/AuthContext";
 
 const Header = () => {
   const [isUserPopupOpen, setIsUserPopupOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  const [user, setUser] = useState(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const userData = localStorage.getItem("user");
-    if (userData) {
-      try {
-        setUser(JSON.parse(userData));
-      } catch (e) {
-        console.error("Ошибка парсинга данных пользователя:", e);
-      }
-    }
-  }, []);
+  const { user } = useAuth();
 
   const handleUserNameClick = (e) => {
     e.preventDefault();

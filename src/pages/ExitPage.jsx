@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Wrapper } from "../components/App.styled";
 import Header from "../components/Header/Header";
 import styled from "styled-components";
+import { useAuth } from "../contexts/AuthContext";
 
 const ExitContainer = styled.div`
   width: 100%;
@@ -27,20 +28,19 @@ const ExitMessage = styled.p`
   color: ${(props) => props.theme.colors.black};
 `;
 
-const ExitPage = ({ setIsAuth }) => {
+const ExitPage = () => {
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   useEffect(() => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setIsAuth(false);
+    logout();
 
     const timer = setTimeout(() => {
       navigate("/login");
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, [setIsAuth, navigate]);
+  }, [logout, navigate]);
 
   return (
     <Wrapper>

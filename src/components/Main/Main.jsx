@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import Column from "../Column/Column";
-import { tasksAPI } from "../../services/api";
 import {
   MainContainer,
   MainBlock,
@@ -12,54 +11,36 @@ import {
   RetryButton,
 } from "./Main.styled";
 import { Container } from "../App.styled";
+import { useTasks } from "../../contexts/TaskContext";
+import { tasksAPI } from "../../services/api";
 
 const Main = ({ hideDataFetch = false }) => {
-  const [isLoading, setIsLoading] = useState(!hideDataFetch);
-  const [error, setError] = useState(null);
-  const [cards, setCards] = useState([]);
-
-  const fetchTasks = async (forceRefresh = false) => {
-    if (hideDataFetch) {
-      const cachedTasks = tasksAPI.getTasksFromCache?.();
-      if (cachedTasks) {
-        setCards(cachedTasks);
-      }
-      setIsLoading(false);
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const token = localStorage.getItem("token");
-      console.log("Token exists:", !!token);
-
-      if (!token) {
-        throw new Error("Необходимо авторизоваться");
-      }
-
-      const tasks = await tasksAPI.getAll(forceRefresh);
-      console.log("Fetched tasks:", tasks);
-      setCards(tasks);
-    } catch (err) {
-      console.error("Error fetching tasks:", err);
-      setError(err.message || "Не удалось загрузить задачи");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { tasks, isLoading, error, setTasks } = useTasks();
 
   useEffect(() => {
-    if (!hideDataFetch) {
-      fetchTasks();
-    } else {
-      const cachedTasks = tasksAPI.getTasksFromCache?.();
-      if (cachedTasks) {
-        setCards(cachedTasks);
+    const loadTasks = async () => {
+        const cachedTasks = tasksAPI.getTasksFromCache();
+
+      if (cachedTasks && cachedTasks.length > 0) {
+        setTasks(cachedTasks);
+      } else if (!hideDataFetch) {
+        try {
+          const fetchedTasks = await tasksAPI.getAll();
+          setTasks(fetchedTasks);
+        } catch (err) {
+          console.error("Main: ошибка загрузки задач:", err);
+        }
+      } else {
+        try {
+          const fetchedTasks = await tasksAPI.getAll();
+          setTasks(fetchedTasks);
+        } catch (err) {
+          console.error("Main: ошибка загрузки задач:", err);
+        }
       }
-      setIsLoading(false);
-    }
+    };
+
+    loadTasks();
   }, [hideDataFetch]);
 
   const columns = [
@@ -85,7 +66,7 @@ const Main = ({ hideDataFetch = false }) => {
     }
   };
 
-  if (isLoading) {
+  if (isLoading && !hideDataFetch) {
     return (
       <MainContainer>
         <Container>
@@ -97,13 +78,22 @@ const Main = ({ hideDataFetch = false }) => {
     );
   }
 
-  if (error) {
+  if (error && !hideDataFetch) {
     return (
       <MainContainer>
         <Container>
           <ErrorContainer>
             <ErrorText>{error}</ErrorText>
-            <RetryButton onClick={() => fetchTasks(true)}>
+            <RetryButton
+              onClick={async () => {
+                try {
+                  const fetchedTasks = await tasksAPI.getAll(true);
+                  setTasks(fetchedTasks);
+                } catch (err) {
+                  console.error(err);
+                }
+              }}
+            >
               Повторить попытку
             </RetryButton>
           </ErrorContainer>
@@ -112,7 +102,7 @@ const Main = ({ hideDataFetch = false }) => {
     );
   }
 
-  if (cards.length === 0) {
+  if (!tasks || tasks.length === 0) {
     return (
       <MainContainer>
         <Container>
@@ -143,7 +133,7 @@ const Main = ({ hideDataFetch = false }) => {
               <Column
                 key={column.status}
                 title={column.title}
-                cards={cards
+                cards={tasks
                   .filter((card) => card.status === column.status)
                   .map((card) => ({
                     theme:

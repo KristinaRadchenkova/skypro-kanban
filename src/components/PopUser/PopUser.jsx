@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import {
   PopUserSet,
   PopUserName,
@@ -6,20 +5,10 @@ import {
   PopUserTheme,
   PopUserButton,
 } from "./PopUser.styled";
+import { useAuth } from "../../contexts/AuthContext";
 
 const PopUser = ({ isOpen, onExitClick }) => {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const userData = localStorage.getItem("user");
-    if (userData) {
-      try {
-        setUser(JSON.parse(userData));
-      } catch (e) {
-        console.error("Ошибка парсинга данных пользователя:", e);
-      }
-    }
-  }, [isOpen]);
+  const { user } = useAuth();
 
   const handleExitClick = (e) => {
     e.preventDefault();

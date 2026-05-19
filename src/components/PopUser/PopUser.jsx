@@ -20,8 +20,8 @@ const PopUser = ({ isOpen, onExitClick }) => {
 
   return (
     <PopUserSet $isOpen={isOpen} id="user-set-target">
-      <PopUserName>{userName}</PopUserName>
-      <PopUserMail>{userLogin}</PopUserMail>
+      <PopUserName title={userName}>{userName}</PopUserName>
+      <PopUserMail title={userLogin}>{userLogin}</PopUserMail>
       <PopUserTheme>
         <p>Темная тема</p>
         <input type="checkbox" className="checkbox" name="checkbox" />

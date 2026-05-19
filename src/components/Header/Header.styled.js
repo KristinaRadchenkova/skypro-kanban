@@ -27,12 +27,13 @@ export const HeaderLogo = styled.div`
 `;
 
 export const HeaderNav = styled.nav`
-  max-width: 290px;
+  max-width: 350px;
   padding: 0;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   position: relative;
+  gap: 20px;
 `;
 
 export const HeaderBtnMainNew = styled.button`
@@ -45,8 +46,8 @@ export const HeaderBtnMainNew = styled.button`
   font-size: 14px;
   line-height: 1;
   font-weight: ${(props) => props.theme.typography.fontWeight.medium};
-  margin-right: 20px;
   cursor: pointer;
+  flex-shrink: 0;
 
   a {
     color: ${(props) => props.theme.colors.white};
@@ -80,6 +81,15 @@ export const HeaderUser = styled.a`
   color: ${(props) => props.theme.colors.primary};
   text-decoration: none;
   cursor: pointer;
+  max-width: 150px;
+  flex-shrink: 1;
+  overflow: hidden;
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
   &::after {
     content: "";
@@ -92,6 +102,7 @@ export const HeaderUser = styled.a`
     transform: rotate(-45deg);
     margin: -6px 0 0 5px;
     padding: 0;
+    flex-shrink: 0;
   }
 
   &:hover {
@@ -101,5 +112,9 @@ export const HeaderUser = styled.a`
       border-left-color: ${(props) => props.theme.colors.primaryHover};
       border-bottom-color: ${(props) => props.theme.colors.primaryHover};
     }
+  }
+
+  @media screen and (max-width: ${(props) => props.theme.breakpoints.mobile}) {
+    max-width: 120px;
   }
 `;

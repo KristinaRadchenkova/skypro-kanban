@@ -64,6 +64,8 @@ const CardPage = () => {
       const task = await tasksAPI.getById(id);
       const formattedCard = {
         ...task,
+        _id: task._id,
+        id: task._id,
         theme:
           task.topic === "Web Design"
             ? "orange"

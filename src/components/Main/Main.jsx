@@ -4,36 +4,39 @@ import {
   MainContainer,
   MainBlock,
   MainContent,
-  LoadingContainer,
+  LoadingWrapper,
+  Spinner,
   LoadingText,
   ErrorContainer,
   ErrorText,
   RetryButton,
+  EmptyState,
+  EmptyStateIcon,
+  EmptyStateTitle,
+  EmptyStateText,
 } from "./Main.styled";
 import { Container } from "../App.styled";
 import { useTasks } from "../../contexts/TaskContext";
 import { tasksAPI } from "../../services/api";
 
 const Main = ({ hideDataFetch = false }) => {
-  const { tasks, isLoading, error, setTasks } = useTasks();
+  const { tasks, isLoading, error, setTasks, fetchTasks } = useTasks();
 
   useEffect(() => {
     const loadTasks = async () => {
-        const cachedTasks = tasksAPI.getTasksFromCache();
+      const cachedTasks = tasksAPI.getTasksFromCache();
 
       if (cachedTasks && cachedTasks.length > 0) {
         setTasks(cachedTasks);
       } else if (!hideDataFetch) {
         try {
-          const fetchedTasks = await tasksAPI.getAll();
-          setTasks(fetchedTasks);
+          await fetchTasks();
         } catch (err) {
           console.error("Main: ошибка загрузки задач:", err);
         }
       } else {
         try {
-          const fetchedTasks = await tasksAPI.getAll();
-          setTasks(fetchedTasks);
+          await fetchTasks();
         } catch (err) {
           console.error("Main: ошибка загрузки задач:", err);
         }
@@ -41,7 +44,7 @@ const Main = ({ hideDataFetch = false }) => {
     };
 
     loadTasks();
-  }, [hideDataFetch]);
+  }, [hideDataFetch, fetchTasks, setTasks]);
 
   const columns = [
     { title: "Без статуса", status: "Без статуса" },
@@ -70,9 +73,10 @@ const Main = ({ hideDataFetch = false }) => {
     return (
       <MainContainer>
         <Container>
-          <LoadingContainer>
-            <LoadingText>Данные загружаются...</LoadingText>
-          </LoadingContainer>
+          <LoadingWrapper>
+            <Spinner />
+            <LoadingText>Загрузка задач...</LoadingText>
+          </LoadingWrapper>
         </Container>
       </MainContainer>
     );
@@ -87,8 +91,7 @@ const Main = ({ hideDataFetch = false }) => {
             <RetryButton
               onClick={async () => {
                 try {
-                  const fetchedTasks = await tasksAPI.getAll(true);
-                  setTasks(fetchedTasks);
+                  await fetchTasks(true);
                 } catch (err) {
                   console.error(err);
                 }
@@ -108,15 +111,14 @@ const Main = ({ hideDataFetch = false }) => {
         <Container>
           <MainBlock>
             <MainContent>
-              <div
-                style={{
-                  textAlign: "center",
-                  padding: "40px",
-                  color: "#94a6be",
-                }}
-              >
-                Нет задач. Создайте первую задачу!
-              </div>
+              <EmptyState>
+                <EmptyStateIcon>📋</EmptyStateIcon>
+                <EmptyStateTitle>Новых задач нет</EmptyStateTitle>
+                <EmptyStateText>
+                  Создайте свою первую задачу, нажав кнопку "Создать новую
+                  задачу"
+                </EmptyStateText>
+              </EmptyState>
             </MainContent>
           </MainBlock>
         </Container>

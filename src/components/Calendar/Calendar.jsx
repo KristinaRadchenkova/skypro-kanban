@@ -22,7 +22,6 @@ const Calendar = ({
     return new Date();
   });
 
-  const isViewMode = mode === "view";
   const isEditMode = mode === "edit" || mode === "new";
 
   useEffect(() => {
@@ -36,7 +35,7 @@ const Calendar = ({
   }, [externalSelectedDate]);
 
   const handleDateSelect = (day, month, year) => {
-    if (isViewMode) return;
+    if (mode === "view") return;
 
     const date = new Date(year, month, day);
     setSelectedDate(date);

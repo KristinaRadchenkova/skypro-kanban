@@ -21,6 +21,7 @@ const PopBrowse = ({ card, onCardUpdate }) => {
   const [description, setDescription] = useState(card?.description || "");
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (card) {
@@ -44,6 +45,7 @@ const PopBrowse = ({ card, onCardUpdate }) => {
 
   const handleEditClick = () => {
     setIsEditing(true);
+    setError("");
   };
 
   const handleStatusSelect = (status) => {
@@ -59,14 +61,22 @@ const PopBrowse = ({ card, onCardUpdate }) => {
   };
 
   const handleSave = async () => {
+    const trimmedDescription = description.trim();
+    if (trimmedDescription.length === 0) {
+      setError("Описание не может быть пустым");
+      return;
+    }
+
     setIsUpdating(true);
+    setError("");
+
     try {
       const updatedData = {
-        ...card,
+        title: card.title,
+        topic: card.topic,
         status: selectedStatus,
-        date: selectedDate,
-        description: description.trim() || " ",
-        theme: card.topic,
+        date: selectedDate.toISOString(),
+        description: trimmedDescription,
       };
 
       await updateTask(card._id, updatedData);
@@ -75,30 +85,32 @@ const PopBrowse = ({ card, onCardUpdate }) => {
         onCardUpdate({
           status: selectedStatus,
           date: selectedDate,
-          description: description.trim() || " ",
+          description: trimmedDescription,
           topic: card.topic,
         });
       }
 
       setIsEditing(false);
     } catch (err) {
-      alert("Ошибка при обновлении задачи");
+      setError(err.message || "Ошибка при обновлении задачи");
     } finally {
       setIsUpdating(false);
     }
   };
+
   const handleDelete = async () => {
     if (!window.confirm("Вы уверены, что хотите удалить эту задачу?")) {
       return;
     }
 
     setIsDeleting(true);
+    setError("");
+
     try {
       await deleteTask(card._id);
       navigate("/");
     } catch (err) {
-      alert("Ошибка при удалении задачи");
-    } finally {
+      setError(err.message || "Ошибка при удалении задачи");
       setIsDeleting(false);
     }
   };
@@ -113,6 +125,7 @@ const PopBrowse = ({ card, onCardUpdate }) => {
     }
     setDescription(card.description || "");
     setIsEditing(false);
+    setError("");
   };
 
   const statuses = [
@@ -142,6 +155,8 @@ const PopBrowse = ({ card, onCardUpdate }) => {
                 {card.topic}
               </S.CategoryBadge>
             </S.PopBrowseTopBlock>
+
+            {error && <S.ErrorMessage>{error}</S.ErrorMessage>}
 
             <S.StatusSection>
               <S.SectionLabel>Статус</S.SectionLabel>

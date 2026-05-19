@@ -20,6 +20,17 @@ export const setNavigate = (navigate) => {
 
 const handleResponse = async (response) => {
   if (!response.ok) {
+    let errorMessage = `Ошибка HTTP! статус: ${response.status}`;
+
+    try {
+      const error = await response.json();
+      errorMessage = error.message || error.error || errorMessage;
+    } catch (e) {
+      try {
+        errorMessage = await response.text();
+      } catch (textError) {}
+    }
+
     if (response.status === 401) {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
@@ -32,10 +43,7 @@ const handleResponse = async (response) => {
       throw new Error("Сессия истекла. Пожалуйста, войдите снова.");
     }
 
-    const error = await response.json().catch(() => ({}));
-    throw new Error(
-      error.message || error.error || `Ошибка HTTP! статус: ${response.status}`,
-    );
+    throw new Error(errorMessage);
   }
   return response.json();
 };
@@ -207,10 +215,12 @@ export const authAPI = {
     });
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({}));
-      throw new Error(
-        error.message || error.error || "Неверный логин или пароль",
-      );
+      let errorMessage = "Неверный логин или пароль";
+      try {
+        const error = await response.json();
+        errorMessage = error.message || error.error || errorMessage;
+      } catch (e) {}
+      throw new Error(errorMessage);
     }
 
     const data = await response.json();
@@ -238,12 +248,13 @@ export const authAPI = {
     });
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({}));
-      throw new Error(
-        error.message ||
-          error.error ||
-          "Ошибка при регистрации. Возможно, такой логин уже существует.",
-      );
+      let errorMessage =
+        "Ошибка при регистрации. Возможно, такой логин уже существует.";
+      try {
+        const error = await response.json();
+        errorMessage = error.message || error.error || errorMessage;
+      } catch (e) {}
+      throw new Error(errorMessage);
     }
 
     const data = await response.json();

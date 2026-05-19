@@ -63,7 +63,7 @@ const Header = () => {
               Создать новую задачу
             </HeaderBtnMainNew>
             <HeaderUser href="#" onClick={handleUserNameClick}>
-              {userName}
+              <span title={userName}>{userName}</span>
             </HeaderUser>
             <PopUser isOpen={isUserPopupOpen} onExitClick={handleExitClick} />
           </HeaderNav>

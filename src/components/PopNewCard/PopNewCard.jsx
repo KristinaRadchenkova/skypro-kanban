@@ -35,7 +35,7 @@ const PopNewCard = () => {
     setFormData((prev) => ({ ...prev, date }));
   };
 
-const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -52,15 +52,14 @@ const handleSubmit = async (e) => {
     setIsSubmitting(true);
 
     try {
-      // Отправляем только нужные поля
       const taskData = {
         title: formData.title.trim(),
         description: formData.description.trim() || " ",
-        theme: formData.theme,
+        topic: formData.theme,
         status: formData.status,
-        date: formData.date,
+        date: formData.date.toISOString(),
       };
-      
+
       await createTask(taskData);
       navigate("/");
     } catch (err) {
@@ -77,7 +76,7 @@ const handleSubmit = async (e) => {
           <S.PopNewCardContent>
             <S.PopNewCardTitle>Создание задачи</S.PopNewCardTitle>
             <S.PopNewCardClose href="#" onClick={handleClose}>
-              &#10006;
+              ✕
             </S.PopNewCardClose>
             {error && <S.ErrorMessage>{error}</S.ErrorMessage>}
             <S.PopNewCardWrap>

@@ -5,8 +5,7 @@ export const PopUserSet = styled.div`
   position: absolute;
   top: 61px;
   right: 0;
-  width: 213px;
-  height: 205px;
+  width: 260px;
   border-radius: ${(props) => props.theme.borderRadius.large};
   border: 0.7px solid ${(props) => props.theme.colors.border};
   background: ${(props) => props.theme.colors.white};
@@ -23,6 +22,9 @@ export const PopUserName = styled.p`
   line-height: 21px;
   letter-spacing: -0.14px;
   margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export const PopUserMail = styled.p`
@@ -31,6 +33,9 @@ export const PopUserMail = styled.p`
   line-height: 21px;
   letter-spacing: -0.14px;
   margin-bottom: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export const PopUserTheme = styled.div`

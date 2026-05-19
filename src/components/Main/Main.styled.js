@@ -37,3 +37,32 @@ export const LoadingText = styled.p`
   color: ${(props) => props.theme.colors.gray};
   font-size: 16px;
 `;
+
+export const ErrorContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  gap: 20px;
+`;
+
+export const ErrorText = styled.p`
+  color: #c33;
+  font-size: 16px;
+  text-align: center;
+`;
+
+export const RetryButton = styled.button`
+  padding: 10px 20px;
+  background-color: ${(props) => props.theme.colors.primary};
+  color: ${(props) => props.theme.colors.white};
+  border: none;
+  border-radius: ${(props) => props.theme.borderRadius.small};
+  cursor: pointer;
+  font-size: 14px;
+
+  &:hover {
+    background-color: ${(props) => props.theme.colors.primaryHover};
+  }
+`;

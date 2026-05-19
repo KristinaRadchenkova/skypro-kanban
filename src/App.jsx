@@ -1,25 +1,32 @@
-import { useState, useEffect } from "react";
 import { ThemeProvider } from "styled-components";
 import { theme } from "./theme/theme";
 import { GlobalStyles } from "./GlobalStyles";
 import AppRoutes from "./components/AppRoutes";
+import { useAuth } from "./contexts/AuthContext";
 
 function App() {
-  const [isAuth, setIsAuth] = useState(() => {
-    // Проверяем localStorage при инициализации
-    const savedAuth = localStorage.getItem("isAuth");
-    return savedAuth ? JSON.parse(savedAuth) : false;
-  });
+  const { isLoading } = useAuth();
 
-  // Сохраняем состояние авторизации при его изменении
-  useEffect(() => {
-    localStorage.setItem("isAuth", JSON.stringify(isAuth));
-  }, [isAuth]);
+  if (isLoading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          fontFamily: "Arial, sans-serif",
+        }}
+      >
+        Загрузка приложения...
+      </div>
+    );
+  }
 
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyles />
-      <AppRoutes isAuth={isAuth} setIsAuth={setIsAuth} />
+      <AppRoutes />
     </ThemeProvider>
   );
 }

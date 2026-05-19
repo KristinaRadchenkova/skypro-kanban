@@ -32,6 +32,7 @@ export const HeaderNav = styled.nav`
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
 `;
 
 export const HeaderBtnMainNew = styled.button`
@@ -45,6 +46,7 @@ export const HeaderBtnMainNew = styled.button`
   line-height: 1;
   font-weight: ${(props) => props.theme.typography.fontWeight.medium};
   margin-right: 20px;
+  cursor: pointer;
 
   a {
     color: ${(props) => props.theme.colors.white};
@@ -76,6 +78,8 @@ export const HeaderUser = styled.a`
   font-size: 14px;
   line-height: 20px;
   color: ${(props) => props.theme.colors.primary};
+  text-decoration: none;
+  cursor: pointer;
 
   &::after {
     content: "";

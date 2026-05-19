@@ -1,16 +1,142 @@
+import { useState, useEffect } from "react";
 import * as S from "./Calendar.styled";
 
-const Calendar = ({ mode = "new" }) => {
-  const isBrowseMode = mode === "browse";
+const Calendar = ({
+  mode = "new",
+  selectedDate: externalSelectedDate,
+  onDateSelect,
+}) => {
+  const [selectedDate, setSelectedDate] = useState(() => {
+    if (externalSelectedDate) {
+      const date = new Date(externalSelectedDate);
+      return isNaN(date.getTime()) ? new Date() : date;
+    }
+    return new Date();
+  });
+
+  const [currentMonth, setCurrentMonth] = useState(() => {
+    if (externalSelectedDate) {
+      const date = new Date(externalSelectedDate);
+      return isNaN(date.getTime()) ? new Date() : date;
+    }
+    return new Date();
+  });
+
+  const isViewMode = mode === "view";
+  const isEditMode = mode === "edit" || mode === "new";
+
+  useEffect(() => {
+    if (externalSelectedDate) {
+      const date = new Date(externalSelectedDate);
+      if (!isNaN(date.getTime())) {
+        setSelectedDate(date);
+        setCurrentMonth(date);
+      }
+    }
+  }, [externalSelectedDate]);
+
+  const handleDateSelect = (day, month, year) => {
+    if (isViewMode) return;
+
+    const date = new Date(year, month, day);
+    setSelectedDate(date);
+    if (onDateSelect) {
+      onDateSelect(date);
+    }
+  };
+
+  const formatDate = (date) => {
+    if (!date) return "";
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return "";
+    return d.toLocaleDateString("ru-RU", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "2-digit",
+    });
+  };
+
+  const getMonthName = (date) => {
+    const month = date.toLocaleDateString("ru-RU", { month: "long" });
+    const year = date.getFullYear();
+    return `${month.charAt(0).toUpperCase() + month.slice(1)} ${year}`;
+  };
+
+  const getDaysInMonth = (date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDay = firstDay.getDay() || 7;
+
+    const days = [];
+
+    const prevMonthLastDay = new Date(year, month, 0).getDate();
+    for (let i = startingDay - 1; i > 0; i--) {
+      days.push({
+        day: prevMonthLastDay - i + 1,
+        isOtherMonth: true,
+        date: new Date(year, month - 1, prevMonthLastDay - i + 1),
+      });
+    }
+
+    for (let i = 1; i <= daysInMonth; i++) {
+      days.push({
+        day: i,
+        isOtherMonth: false,
+        date: new Date(year, month, i),
+      });
+    }
+
+    const remainingDays = 42 - days.length;
+    for (let i = 1; i <= remainingDays; i++) {
+      days.push({
+        day: i,
+        isOtherMonth: true,
+        date: new Date(year, month + 1, i),
+      });
+    }
+
+    return days;
+  };
+
+  const handlePrevMonth = () => {
+    setCurrentMonth(
+      new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1),
+    );
+  };
+
+  const handleNextMonth = () => {
+    setCurrentMonth(
+      new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1),
+    );
+  };
+
+  const days = getDaysInMonth(currentMonth);
+  const today = new Date();
+
+  const isToday = (date) => {
+    return date.toDateString() === today.toDateString();
+  };
+
+  const isSelected = (date) => {
+    return selectedDate && date.toDateString() === selectedDate.toDateString();
+  };
+
+  const isWeekend = (date) => {
+    const day = date.getDay();
+    return day === 0 || day === 6;
+  };
 
   return (
     <S.CalendarContainer>
-      <S.CalendarTitle className="subttl">Даты</S.CalendarTitle>
+      <S.CalendarTitle>Даты</S.CalendarTitle>
       <S.CalendarBlock>
         <S.CalendarNav>
-          <S.CalendarMonth>Сентябрь 2023</S.CalendarMonth>
+          <S.CalendarMonth>{getMonthName(currentMonth)}</S.CalendarMonth>
           <S.NavActions>
-            <S.NavAction data-action="prev">
+            <S.NavAction onClick={handlePrevMonth}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="6"
@@ -20,7 +146,7 @@ const Calendar = ({ mode = "new" }) => {
                 <path d="M5.72945 1.95273C6.09018 1.62041 6.09018 1.0833 5.72945 0.750969C5.36622 0.416344 4.7754 0.416344 4.41218 0.750969L0.528487 4.32883C-0.176162 4.97799 -0.176162 6.02201 0.528487 6.67117L4.41217 10.249C4.7754 10.5837 5.36622 10.5837 5.72945 10.249C6.09018 9.9167 6.09018 9.37959 5.72945 9.04727L1.87897 5.5L5.72945 1.95273Z" />
               </svg>
             </S.NavAction>
-            <S.NavAction data-action="next">
+            <S.NavAction onClick={handleNextMonth}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="6"
@@ -43,81 +169,33 @@ const Calendar = ({ mode = "new" }) => {
             <S.DayName>вс</S.DayName>
           </S.DaysNames>
           <S.Cells>
-            <S.Cell $isOtherMonth>28</S.Cell>
-            <S.Cell $isOtherMonth>29</S.Cell>
-            <S.Cell $isOtherMonth>30</S.Cell>
-            <S.Cell $isClickable>31</S.Cell>
-            <S.Cell $isClickable>1</S.Cell>
-            <S.Cell $isClickable $isWeekend>
-              2
-            </S.Cell>
-            <S.Cell $isClickable $isWeekend>
-              3
-            </S.Cell>
-            <S.Cell $isClickable>4</S.Cell>
-            <S.Cell $isClickable>5</S.Cell>
-            <S.Cell $isClickable>6</S.Cell>
-            <S.Cell $isClickable>7</S.Cell>
-            <S.Cell $isClickable $isCurrent>
-              8
-            </S.Cell>
-            <S.Cell $isClickable $isWeekend $isActive={isBrowseMode}>
-              9
-            </S.Cell>
-            <S.Cell $isClickable $isWeekend>
-              10
-            </S.Cell>
-            <S.Cell $isClickable>11</S.Cell>
-            <S.Cell $isClickable>12</S.Cell>
-            <S.Cell $isClickable>13</S.Cell>
-            <S.Cell $isClickable>14</S.Cell>
-            <S.Cell $isClickable>15</S.Cell>
-            <S.Cell $isClickable $isWeekend>
-              16
-            </S.Cell>
-            <S.Cell $isClickable $isWeekend>
-              17
-            </S.Cell>
-            <S.Cell $isClickable>18</S.Cell>
-            <S.Cell $isClickable>19</S.Cell>
-            <S.Cell $isClickable>20</S.Cell>
-            <S.Cell $isClickable>21</S.Cell>
-            <S.Cell $isClickable>22</S.Cell>
-            <S.Cell $isClickable $isWeekend>
-              23
-            </S.Cell>
-            <S.Cell $isClickable $isWeekend>
-              24
-            </S.Cell>
-            <S.Cell $isClickable>25</S.Cell>
-            <S.Cell $isClickable>26</S.Cell>
-            <S.Cell $isClickable>27</S.Cell>
-            <S.Cell $isClickable>28</S.Cell>
-            <S.Cell $isClickable>29</S.Cell>
-            <S.Cell $isClickable $isWeekend>
-              30
-            </S.Cell>
-            <S.Cell $isOtherMonth $isWeekend>
-              1
-            </S.Cell>
+            {days.map((day, index) => (
+              <S.Cell
+                key={index}
+                $isOtherMonth={day.isOtherMonth}
+                $isWeekend={isWeekend(day.date)}
+                $isCurrent={isToday(day.date)}
+                $isActive={isSelected(day.date)}
+                $isClickable={isEditMode}
+                onClick={() =>
+                  handleDateSelect(
+                    day.day,
+                    day.date.getMonth(),
+                    day.date.getFullYear(),
+                  )
+                }
+              >
+                {day.day}
+              </S.Cell>
+            ))}
           </S.Cells>
         </S.CalendarContent>
 
-        <S.HiddenInput
-          type="hidden"
-          id="datepick_value"
-          defaultValue="08.09.2023"
-        />
         <S.CalendarPeriod>
-          {isBrowseMode ? (
-            <S.PeriodText className="date-end">
-              Срок исполнения: <span className="date-control">09.09.23</span>
-            </S.PeriodText>
-          ) : (
-            <S.PeriodText className="date-end">
-              Выберите срок исполнения <span className="date-control"></span>.
-            </S.PeriodText>
-          )}
+          <S.PeriodText>
+            Срок исполнения:{" "}
+            <S.PeriodDate>{formatDate(selectedDate)}</S.PeriodDate>
+          </S.PeriodText>
         </S.CalendarPeriod>
       </S.CalendarBlock>
     </S.CalendarContainer>

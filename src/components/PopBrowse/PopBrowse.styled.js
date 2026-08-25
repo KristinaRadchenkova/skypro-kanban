@@ -289,6 +289,27 @@ export const PrimaryButton = styled.button`
   }
 `;
 
+export const FormBrowseTextarea = styled.textarea`
+  width: 100%;
+  padding: 14px;
+  background: #eaeef6;
+  border: 0.7px solid rgba(148, 166, 190, 0.4);
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.4;
+  letter-spacing: -0.14px;
+  margin-top: 14px;
+  min-height: 200px;
+  color: #000;
+  resize: vertical;
+  font-family: inherit;
+
+  &:focus {
+    outline: none;
+    border-color: #565eef;
+  }
+`;
+
 export const ErrorMessage = styled.div`
   background-color: #fee;
   color: #c33;

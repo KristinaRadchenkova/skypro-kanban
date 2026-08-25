@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import * as S from "./PopBrowse.styled";
 import Calendar from "../Calendar/Calendar.jsx";
 import { useTasks } from "../../contexts/TaskContext.jsx";
+import ConfirmModal from "../ConfirmModal/ConfirmModal.jsx";
 
 const PopBrowse = ({ card, onCardUpdate }) => {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ const PopBrowse = ({ card, onCardUpdate }) => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState("");
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     if (card) {
@@ -74,6 +76,7 @@ const PopBrowse = ({ card, onCardUpdate }) => {
       const updatedData = {
         title: card.title,
         topic: card.topic,
+        theme: card.topic,
         status: selectedStatus,
         date: selectedDate.toISOString(),
         description: trimmedDescription,
@@ -98,11 +101,12 @@ const PopBrowse = ({ card, onCardUpdate }) => {
     }
   };
 
-  const handleDelete = async () => {
-    if (!window.confirm("Вы уверены, что хотите удалить эту задачу?")) {
-      return;
-    }
+  const handleDeleteClick = () => {
+    setIsDeleteModalOpen(true);
+  };
 
+  const handleDeleteConfirm = async () => {
+    setIsDeleteModalOpen(false);
     setIsDeleting(true);
     setError("");
 
@@ -113,6 +117,10 @@ const PopBrowse = ({ card, onCardUpdate }) => {
       setError(err.message || "Ошибка при удалении задачи");
       setIsDeleting(false);
     }
+  };
+
+  const handleDeleteCancel = () => {
+    setIsDeleteModalOpen(false);
   };
 
   const handleCancel = () => {
@@ -217,7 +225,7 @@ const PopBrowse = ({ card, onCardUpdate }) => {
                       Отменить
                     </S.OutlineButton>
                     <S.OutlineButton
-                      onClick={handleDelete}
+                      onClick={handleDeleteClick}
                       disabled={isDeleting}
                     >
                       {isDeleting ? "Удаление..." : "Удалить задачу"}
@@ -229,7 +237,7 @@ const PopBrowse = ({ card, onCardUpdate }) => {
                       Редактировать задачу
                     </S.OutlineButton>
                     <S.OutlineButton
-                      onClick={handleDelete}
+                      onClick={handleDeleteClick}
                       disabled={isDeleting}
                     >
                       {isDeleting ? "Удаление..." : "Удалить задачу"}
@@ -242,6 +250,13 @@ const PopBrowse = ({ card, onCardUpdate }) => {
           </S.PopBrowseContent>
         </S.PopBrowseBlock>
       </S.PopBrowseWrapper>
+      <ConfirmModal
+        isOpen={isDeleteModalOpen}
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+        title="Удаление задачи"
+        message="Вы уверены, что хотите удалить эту задачу?"
+      />
     </S.PopBrowseContainer>
   );
 };
